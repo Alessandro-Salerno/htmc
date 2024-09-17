@@ -1,0 +1,11 @@
+<html>
+  <head>
+    bla bla
+  </head>
+
+  <body>
+    <?c>
+      printf("Hello, world!");
+    ?>
+  </body>
+</html>
