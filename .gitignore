@@ -1,0 +1,10 @@
+*.o
+*.exe
+*.a
+*.so
+*.html
+*.css
+*.js
+*.php
+*.out
+htmc

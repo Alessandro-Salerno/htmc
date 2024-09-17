@@ -22,8 +22,16 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 int main(int argc, char *argv[]) {
-  printf("Hello, world!");
-  return EXIT_SUCCESS;
+  int fd[2];
+  pipe(fd);
+  char *s = "test";
+  int   l = strlen(s);
+  write(fd[1], s, l);
+  char out[20] = {0};
+  read(fd[0], out, l);
+  printf("%s", out);
 }
