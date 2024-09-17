@@ -3,8 +3,10 @@
 *.a
 *.so
 *.html
+*.htmc
 *.css
 *.js
 *.php
 *.out
 htmc
+tmp/
