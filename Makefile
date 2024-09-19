@@ -22,7 +22,7 @@
 
 
 CC=gcc
-CFLAGS=-O2
+CFLAGS=-O2 -Iinclude/
 OUT=htmc
 
 rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard ,$d, $2) $(filter $(subst *, %, $2),$d))
@@ -35,7 +35,7 @@ all: $(OUT)
 $(OUT): obj $(OBJ)
 	$(CC) $(OBJ) -o $(OUT)
 
-$(OBJ): $(SRC)
+obj/%.o: src/%.c
 	$(CC) $(CFLAGS) -c $^ -o $@
 
 obj:
