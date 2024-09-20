@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 #include <stdarg.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -109,7 +110,66 @@ int impl_debug_vprintf(htmc_handover_t *handover,
 int impl_debug_query_vscanf(htmc_handover_t *handover,
                             const char      *fmt,
                             va_list          args) {
-  return vsscanf(handover->query_string, fmt, args);
+  if (0 == handover->query_param_sep_off) {
+    handover->query_has_params = false;
+    for (const char *cp = handover->query_string; *cp; cp++) {
+      if ('?' == *cp) {
+        handover->query_has_params = true;
+        break;
+      }
+
+      handover->query_param_sep_off++;
+    }
+  }
+
+  if (!handover->query_has_params) {
+    return -1;
+  }
+
+  int fmt_off = 0;
+  for (const char *cp = handover->query_string + handover->query_param_sep_off;
+       *cp && fmt[fmt_off];
+       cp++) {
+    const char query_char = *cp;
+    const char fmt_char   = fmt[fmt_off];
+
+    if ('%' == fmt_char) {
+      const char fmt_id = fmt[fmt_off + 1];
+
+      // Temporary
+      // Idea:
+      // Create 4 char buffer
+      // Copy %d/%s identifier into that buffer
+      // use that string as fmt for sscanf
+      switch (fmt_id) {
+      case 'i':
+      case 'd': {
+        int *dst = va_arg(args, int *);
+        sscanf(cp, "%d", dst);
+        break;
+      }
+
+      case 'f':
+        break;
+
+      case 'c':
+        break;
+
+      case 's':
+        break;
+      }
+      break;
+    }
+
+    if (query_char == fmt_char) {
+      fmt_off++;
+      continue;
+    }
+
+    fmt_off = 0;
+  }
+
+  return 0;
 }
 
 int impl_debug_form_vscanf(htmc_handover_t *handover,

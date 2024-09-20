@@ -5,8 +5,9 @@
 
   <body>
     <?c>
-      htmc_printf("<h1>Borsa Merci di Stocazzo</h1>\r\n");
-      htmc_printf("<p>Bella li, sto codice è generato</p>\r\n");
+      int param = 0;
+      int ret = htmc_query_scanf("param=%d", &param);
+      htmc_printf("%d %d", ret, param);
     ?>
   </body>
 </html>

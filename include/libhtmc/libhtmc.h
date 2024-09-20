@@ -22,6 +22,7 @@
 
 #pragma once
 #include <stdarg.h>
+#include <stdbool.h>
 #include <stdio.h>
 
 typedef enum htmc_handover_variant {
@@ -33,6 +34,9 @@ typedef struct htmc_handover {
   const htmc_handover_variant_t variant_id;
   const char                    request_method[5];
   const char                   *query_string;
+  bool                          query_has_params;
+  int                           query_param_sep_off;
+
   int (*vprintf)(htmc_handover_t *handover, const char *fmt, va_list args);
   int (*query_vscanf)(htmc_handover_t *handover, const char *fmt, va_list args);
   int (*form_vscanf)(htmc_handover_t *handover, const char *fmt, va_list args);

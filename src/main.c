@@ -63,7 +63,7 @@ run:
   htmc_handover_t handover =
       (htmc_handover_t){.variant_id     = HTMC_BASE_HANDOVER,
                         .request_method = "GET",
-                        .query_string   = "examples/test.htmc?param=ciao",
+                        .query_string   = "examples/test.htmc?param=25",
                         .vprintf        = impl_debug_vprintf,
                         .query_vscanf   = impl_debug_query_vscanf,
                         .form_vscanf    = impl_debug_form_vscanf,
