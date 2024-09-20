@@ -26,14 +26,17 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "libhtmc/libhtmc-internals.h"
+#include "libhtmc/libhtmc.h"
+
 void run_c_file(const char *c_file_path) {
-  const char *command     = "gcc -shared -fPIC ";
+  const char *command     = "gcc -shared -fPIC -Iinclude/ src/libhtmc.c ";
   int         so_path_len = strlen(c_file_path) + 4;
   char       *so_path     = calloc(so_path_len, sizeof(char));
   sprintf(so_path, "%s%s", c_file_path, ".so");
 
   char *full_command = calloc(
-      strlen(command) + so_path_len + strlen(c_file_path) + 1, sizeof(char));
+      strlen(command) + so_path_len + strlen(c_file_path) + 10, sizeof(char));
   sprintf(full_command, "%s %s -o %s", command, c_file_path, so_path);
 
   (void)system(full_command);
@@ -44,13 +47,24 @@ void run_c_file(const char *c_file_path) {
     goto cleanup;
   }
 
-  int (*htmc)() = dlsym(handle, "htmc");
-  if (!htmc) {
+  int (*htmc_main)(htmc_handover_t *) = dlsym(handle, "htmc_main");
+  if (!htmc_main) {
     printf("Error 2\n");
     goto cleanup;
   }
 
-  htmc();
+  htmc_handover_t handover =
+      (htmc_handover_t){.variant_id     = HTMC_BASE_HANDOVER,
+                        .request_method = "GET",
+                        .query_string   = "",
+                        .vprintf        = impl_debug_vprintf,
+                        .query_vscanf   = impl_debug_query_vscanf,
+                        .form_vscanf    = impl_debug_form_vscanf,
+                        .alloc          = impl_debug_alloc,
+                        .free           = impl_debug_free,
+                        .cleanup        = impl_debug_cleanup};
+
+  htmc_main(&handover);
 
 cleanup:
   free(full_command);
@@ -75,7 +89,9 @@ void parse_and_run(FILE *f, const char *file_path, int line) {
   // }
 
   FILE *c_file = fopen(tmp_file_path, "w");
-  fprintf(c_file, "#include <stdio.h>\nint htmc() {\n");
+  fprintf(c_file,
+          "#include <stdio.h>\n#include\"libhtmc/libhtmc.h\"\nint "
+          "htmc_main(htmc_handover_t *h) {htmc_bind(h);\n");
 
   char c;
   char last = 0;

@@ -33,18 +33,12 @@ typedef struct htmc_handover {
   const htmc_handover_variant_t variant_id;
   const char                    request_method[5];
   const char                   *query_string;
-  const int (*vprintf)(htmc_handover_t *handover,
-                       const char      *fmt,
-                       va_list          args);
-  const int (*query_vscanf)(htmc_handover_t *handover,
-                            const char      *fmt,
-                            va_list          args);
-  const int (*form_vscanf)(htmc_handover_t *handover,
-                           const char      *fmt,
-                           va_list          args);
-  const void *(*alloc)(htmc_handover_t *handover, size_t nbytes);
-  const void (*free)(htmc_handover_t *handover, void *ptr);
-  const void (*cleanup)(htmc_handover_t *handover);
+  int (*vprintf)(htmc_handover_t *handover, const char *fmt, va_list args);
+  int (*query_vscanf)(htmc_handover_t *handover, const char *fmt, va_list args);
+  int (*form_vscanf)(htmc_handover_t *handover, const char *fmt, va_list args);
+  void *(*alloc)(htmc_handover_t *handover, size_t nbytes);
+  void (*free)(htmc_handover_t *handover, void *ptr);
+  void (*cleanup)(htmc_handover_t *handover);
 } htmc_handover_t;
 
 void htmc_bind(htmc_handover_t *handover);
