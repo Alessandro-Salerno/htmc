@@ -5,7 +5,8 @@
 
   <body>
     <?c>
-      htmc_printf("Hello, world");
+      htmc_printf("<h1>Borsa Merci di Stocazzo</h1>\r\n");
+      htmc_printf("<p>Bella li, sto codice è generato</p>\r\n");
     ?>
   </body>
 </html>

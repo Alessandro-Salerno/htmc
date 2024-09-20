@@ -41,12 +41,15 @@ typedef struct htmc_handover {
   void (*cleanup)(htmc_handover_t *handover);
 } htmc_handover_t;
 
-void htmc_bind(htmc_handover_t *handover);
-int  htmc_printf(const char *fmt, ...);
-int  htmc_vprintf(const char *fmt, va_list args);
-int  htmc_query_scanf(const char *fmt, ...);
-int  htmc_query_vscanf(const char *fmt, va_list args);
-int  htmc_form_scanf(const char *fmt, ...);
-int  htmc_form_vscafn(const char *fmt, va_list args);
-void htmc_error(const char *fmt, ...);
-void htmc_verror(const char *fmt, va_list args);
+void  htmc_bind(htmc_handover_t *handover);
+int   htmc_printf(const char *fmt, ...);
+int   htmc_vprintf(const char *fmt, va_list args);
+int   htmc_query_scanf(const char *fmt, ...);
+int   htmc_query_vscanf(const char *fmt, va_list args);
+int   htmc_form_scanf(const char *fmt, ...);
+int   htmc_form_vscafn(const char *fmt, va_list args);
+void *htmc_alloc(size_t nbytes);
+void  htmc_free(void *ptr);
+void  htmc_cleanup();
+void  htmc_error(const char *fmt, ...);
+void  htmc_verror(const char *fmt, va_list args);

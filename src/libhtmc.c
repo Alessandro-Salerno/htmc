@@ -109,8 +109,7 @@ int impl_debug_vprintf(htmc_handover_t *handover,
 int impl_debug_query_vscanf(htmc_handover_t *handover,
                             const char      *fmt,
                             va_list          args) {
-  // TODO: implement stuff with format name=%d etc etc
-  return -1;
+  return vsscanf(handover->query_string, fmt, args);
 }
 
 int impl_debug_form_vscanf(htmc_handover_t *handover,

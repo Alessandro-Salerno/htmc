@@ -35,18 +35,25 @@ void run_c_file(const char *c_file_path) {
   char       *so_path     = calloc(so_path_len, sizeof(char));
   sprintf(so_path, "%s%s", c_file_path, ".so");
 
-  char *full_command = calloc(
+  char *full_command = NULL;
+  void *handle       = dlopen(so_path, RTLD_LAZY);
+  if (handle) {
+    goto run;
+  }
+
+  full_command = calloc(
       strlen(command) + so_path_len + strlen(c_file_path) + 10, sizeof(char));
   sprintf(full_command, "%s %s -o %s", command, c_file_path, so_path);
 
   (void)system(full_command);
 
-  void *handle = dlopen(so_path, RTLD_LAZY);
+  handle = dlopen(so_path, RTLD_LAZY);
   if (!handle) {
     printf("Error 1\n");
     goto cleanup;
   }
 
+run:
   int (*htmc_main)(htmc_handover_t *) = dlsym(handle, "htmc_main");
   if (!htmc_main) {
     printf("Error 2\n");
@@ -56,7 +63,7 @@ void run_c_file(const char *c_file_path) {
   htmc_handover_t handover =
       (htmc_handover_t){.variant_id     = HTMC_BASE_HANDOVER,
                         .request_method = "GET",
-                        .query_string   = "",
+                        .query_string   = "examples/test.htmc?param=ciao",
                         .vprintf        = impl_debug_vprintf,
                         .query_vscanf   = impl_debug_query_vscanf,
                         .form_vscanf    = impl_debug_form_vscanf,
@@ -67,7 +74,9 @@ void run_c_file(const char *c_file_path) {
   htmc_main(&handover);
 
 cleanup:
-  free(full_command);
+  if (full_command) {
+    free(full_command);
+  }
   free(so_path);
 }
 
