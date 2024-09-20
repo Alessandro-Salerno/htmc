@@ -103,52 +103,7 @@ static size_t  debugStackLastOffset = 0;
 int impl_debug_vprintf(htmc_handover_t *handover,
                        const char      *fmt,
                        va_list          args) {
-  debugStackLastOffset     = debugStackOffset;
-  static char *str_num     = NULL;
-  int          num_formats = 0;
-
-  if (!str_num) {
-    str_num = handover->alloc(handover, 16);
-  }
-
-  for (const char *cp = fmt; *cp; cp++) {
-    if ('%' != *cp) {
-      putchar(*cp);
-      continue;
-    }
-
-    switch (*(++cp)) {
-    case 'i':
-    case 'd':
-      sprintf(str_num, "%d", va_arg(args, int));
-      printf("%s", str_num);
-      num_formats++;
-      break;
-
-    case 'f':
-      sprintf(str_num, "%f", (float)va_arg(args, int));
-      printf("%s", str_num);
-      num_formats++;
-      break;
-
-    case 'c':
-      putchar((char)va_arg(args, int));
-      num_formats++;
-      break;
-
-    case 's':
-      printf("%s", va_arg(args, const char *));
-      num_formats++;
-      break;
-
-    default:
-      putchar('%');
-      break;
-    }
-  }
-
-  str_num[0] = 0;
-  return num_formats;
+  return vprintf(fmt, args);
 }
 
 int impl_debug_query_vscanf(htmc_handover_t *handover,
