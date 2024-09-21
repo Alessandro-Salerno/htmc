@@ -24,6 +24,7 @@
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdint.h>
 
 typedef enum htmc_handover_variant {
   HTMC_BASE_HANDOVER
@@ -33,10 +34,19 @@ typedef struct htmc_handover htmc_handover_t;
 typedef struct htmc_handover {
   const htmc_handover_variant_t variant_id;
   const char                    request_method[5];
+
+  // ----- ARENA -------
+  const size_t                  arena_size;
+  uint8_t*                      debugStack;
+  size_t                        debugStackOffset;
+  size_t                        debugStackLastOffset;
+
+  // ----- QUERY-PARAMS -------
   const char                   *query_string;
   bool                          query_has_params;
   int                           query_param_sep_off;
 
+  // ----- METHODS -------
   int (*vprintf)(htmc_handover_t *handover, const char *fmt, va_list args);
   int (*query_vscanf)(htmc_handover_t *handover, const char *fmt, va_list args);
   int (*form_vscanf)(htmc_handover_t *handover, const char *fmt, va_list args);
@@ -57,3 +67,4 @@ void  htmc_free(void *ptr);
 void  htmc_cleanup();
 void  htmc_error(const char *fmt, ...);
 void  htmc_verror(const char *fmt, va_list args);
+void  htmc_relese_arena();
