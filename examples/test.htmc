@@ -5,7 +5,7 @@
 
   <body>
     <?c>
-      int param = 0;
+      int* param = htmc_alloc(4);
       int ret = htmc_query_scanf("param=%d", &param);
       htmc_printf("%d %d", ret, param);
     ?>
