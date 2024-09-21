@@ -31,8 +31,24 @@
 
 static htmc_handover_t *targetHandover;
 
+// This function is not exposed because it's part of the lib's bootstrap
+// and his behavior can not be changed by other implementations
+// due to the need of other function to already have a space in memory where they can allocate
+static void htmc_init_arena() {
+  targetHandover->debugStack = (uint8_t*)calloc(targetHandover->arena_size, sizeof(uint8_t));
+  targetHandover->debugStackOffset = 0;
+  targetHandover->debugStackLastOffset = 0;
+}
+
 void htmc_bind(htmc_handover_t *handover) {
   targetHandover = handover;
+  htmc_init_arena();
+}
+
+// This function is instead exposed such that when the program 
+// ends it can the free the whole arena
+void htmc_relese_arena() {
+  free(targetHandover->debugStack);
 }
 
 int htmc_printf(const char *fmt, ...) {
@@ -97,9 +113,6 @@ void htmc_verror(const char *fmt, va_list args) {
 // Implementation:
 // Terminal debugger
 
-static uint8_t debugStack[1024]     = {0};
-static size_t  debugStackOffset     = 0;
-static size_t  debugStackLastOffset = 0;
 
 int impl_debug_vprintf(htmc_handover_t *handover,
                        const char      *fmt,
@@ -179,20 +192,22 @@ int impl_debug_form_vscanf(htmc_handover_t *handover,
   return -1;
 }
 
-void *impl_debug_alloc(htmc_handover_t *handover, size_t nbytes) {
-  if (debugStackOffset >= sizeof debugStack) {
+// Maybe it could be improved by resolving struct field's addreses all at first 
+// and than use it stored in a variable
+void *impl_debug_alloc(htmc_handover_t *handover, size_t nbytes) {  
+  if (handover->debugStackOffset >= sizeof handover->debugStack) {
     return NULL;
   }
 
   nbytes += nbytes % 16;
-  size_t offset = debugStackOffset;
-  debugStackOffset += nbytes;
-  return &debugStack[offset];
+  size_t offset = handover->debugStackOffset;
+  handover->debugStackOffset += nbytes;
+  return &handover->debugStack[offset];
 }
 
 void impl_debug_free(htmc_handover_t *handover, void *ptr) {
 }
 
 void impl_debug_cleanup(htmc_handover_t *handover) {
-  debugStackOffset = debugStackLastOffset;
+  handover->debugStackOffset = handover->debugStackLastOffset;
 }
