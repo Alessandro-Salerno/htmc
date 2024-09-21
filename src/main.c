@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+
 #include "libhtmc/libhtmc-internals.h"
 #include "libhtmc/libhtmc.h"
 
@@ -53,7 +54,7 @@ void run_c_file(const char *c_file_path) {
     goto cleanup;
   }
 
-run:
+run: ;
   int (*htmc_main)(htmc_handover_t *) = dlsym(handle, "htmc_main");
   if (!htmc_main) {
     printf("Error 2\n");
@@ -63,7 +64,8 @@ run:
   htmc_handover_t handover =
       (htmc_handover_t){.variant_id     = HTMC_BASE_HANDOVER,
                         .request_method = "GET",
-                        .query_string   = "examples/test.htmc?param=25",
+                        .arena_size     = 1024,
+                        .query_string   = "examples/test.htmc?param=26",
                         .vprintf        = impl_debug_vprintf,
                         .query_vscanf   = impl_debug_query_vscanf,
                         .form_vscanf    = impl_debug_form_vscanf,
@@ -106,7 +108,7 @@ void parse_and_run(FILE *f, const char *file_path, int line) {
   char last = 0;
   while (0 != fread(&c, 1, 1, f)) {
     if ('>' == c && '?' == last) {
-      fprintf(c_file, "\nreturn 0;}");
+      fprintf(c_file, "\nhtmc_relese_arena();\nreturn 0;}");
       fclose(c_file);
       run_c_file(tmp_file_path);
       goto cleanup;
