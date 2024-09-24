@@ -23,26 +23,39 @@
 
 CC=gcc
 CFLAGS=-O2 -Wunused-parameter -Iinclude/
-OUT=htmc
+BIN=bin/
+EXEC=$(BIN)/htmc
+LIB=$(BIN)/libhtmc.a
 
 rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard ,$d, $2) $(filter $(subst *, %, $2),$d))
 SRC=$(call rwildcard, src, *.c)
 OBJ=$(patsubst src/%.c,obj/%.o, $(SRC))
 
-.PHONEY:all
-all: $(OUT)
+.PHONEY: all
+all: $(EXEC) $(LIB)
 
-$(OUT): obj $(OBJ)
-	$(CC) $(OBJ) -o $(OUT)
+.PHONEY: htmc
+htmc: $(EXEC)
+
+.PHONEY: libhtmc
+libhtmc: $(LIB)
+
+$(EXEC): obj $(OBJ)
+	$(CC) $(OBJ) -o $(EXEC)
+
+$(LIB): obj $(OBJ)
+	ar rcs $(LIB) $(OBJ)
 
 obj/%.o: src/%.c
+	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $^ -o $@
 
 obj:
 	mkdir -p obj/
 	mkdir -p tmp/
+	mkdir -p $(BIN)
 
 clean:
 	rm -rf obj/; \
 	rm -rf tmp/; \
-	rm $(OUT)
+	rm -rf $(BIN)
