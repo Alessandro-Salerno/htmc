@@ -30,10 +30,12 @@
 #include "libhtmc/libhtmc.h"
 
 void run_c_file(const char *c_file_path) {
-  const char *command     = "gcc -shared -fPIC -Iinclude/ src/libhtmc.c ";
+  const char *command     = "gcc -O2 -fPIC -Iinclude/ ";
   int         so_path_len = strlen(c_file_path) + 4;
   char       *so_path     = calloc(so_path_len, sizeof(char));
+  char       *obj_path    = calloc(so_path_len, sizeof(char));
   sprintf(so_path, "%s%s", c_file_path, ".so");
+  sprintf(obj_path, "%s%s", c_file_path, ".o");
 
   char *full_command = NULL;
   void *handle       = dlopen(so_path, RTLD_LAZY);
@@ -41,9 +43,17 @@ void run_c_file(const char *c_file_path) {
     goto run;
   }
 
-  full_command = calloc(
-      strlen(command) + so_path_len + strlen(c_file_path) + 10, sizeof(char));
-  sprintf(full_command, "%s %s -o %s", command, c_file_path, so_path);
+  full_command = calloc(strlen(command) + so_path_len + so_path_len + 200 +
+                            strlen(c_file_path) + 10,
+                        sizeof(char));
+  sprintf(full_command,
+          "%s -c %s -o %s && ld -shared -o %s -L./bin --exclude-libs ALL "
+          "--start-group -l:libhtmc.a %s --end-group",
+          command,
+          c_file_path,
+          obj_path,
+          so_path,
+          obj_path);
 
   (void)system(full_command);
 

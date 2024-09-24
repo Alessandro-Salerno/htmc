@@ -22,7 +22,7 @@
 
 
 CC=gcc
-CFLAGS=-O2 -Wunused-parameter -Iinclude/
+CFLAGS=-O2 -Wno-unused-parameter -Iinclude/
 BIN=bin/
 EXEC=$(BIN)/htmc
 LIB=$(BIN)/libhtmc.a
@@ -30,9 +30,10 @@ LIB=$(BIN)/libhtmc.a
 rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard ,$d, $2) $(filter $(subst *, %, $2),$d))
 SRC=$(call rwildcard, src, *.c)
 OBJ=$(patsubst src/%.c,obj/%.o, $(SRC))
+RELOC_OBJ=$(patsubst src/%.c,lib/%.o, $(SRC))
 
 .PHONEY: all
-all: $(EXEC) $(LIB)
+all: obj $(OBJ) $(RELOC_OBJ) $(EXEC) $(LIB)
 
 .PHONEY: htmc
 htmc: $(EXEC)
@@ -43,19 +44,25 @@ libhtmc: $(LIB)
 $(EXEC): obj $(OBJ)
 	$(CC) $(OBJ) -o $(EXEC)
 
-$(LIB): obj $(OBJ)
-	ar rcs $(LIB) $(OBJ)
+$(LIB): obj $(RELOC_OBJ)
+	ar rcs $(LIB) $(RELOC_OBJ)
 
 obj/%.o: src/%.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $^ -o $@
 
+lib/%.o: src/%.c
+	@mkdir -p $(@D)
+	$(CC) $(CFLAGS) -fPIC -g -c $^ -o $@
+
 obj:
-	mkdir -p obj/
-	mkdir -p tmp/
-	mkdir -p $(BIN)
+	@mkdir -p obj/
+	@mkdir -p tmp/
+	@mkdir -p $(BIN)
+	@mkdir -p lib/
 
 clean:
 	rm -rf obj/; \
 	rm -rf tmp/; \
-	rm -rf $(BIN)
+	rm -rf $(BIN); \
+	rm -rf lib/
