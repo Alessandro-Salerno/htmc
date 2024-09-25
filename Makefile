@@ -22,7 +22,7 @@
 
 
 CC=gcc
-CFLAGS=-O2 -Wno-unused-parameter -Iinclude/
+CFLAGS=-O2 -std=c2x -Wno-unused-parameter -Iinclude/
 BIN=bin/
 EXEC=$(BIN)/htmc
 LIB=$(BIN)/libhtmc.a
