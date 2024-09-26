@@ -20,51 +20,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-// Temporary fix to avoid issues
 #include <stdio.h>
-#define HTMC_CGI_INTF
-
-#include <stdlib.h>
-#include <string.h>
 
 #include "log.h"
-#include "util.h"
 
-#define FMT_STR_LEN 2
-#define OBJ_EXT_LEN 2
-#define SO_EXT_LEN  3
-
-#define STR_FMT_INSTANCES 4
-#define OBJ_EXT_INSTANCES 2
-#define SO_EXT_INSTANCES  1
-
-const char *BASE_SO_CMD_FMT =
-    "$(cc) -O2 -fPIC -Iinclude/ -o %s.o -c %s "
-    "&& $(ld) -shared -o %s.so -L./bin --exclude-libs ALL --start-group "
-    "-l:libhtmc.a %s.o --end-group";
-
-int compile_c_output(const char *src_path, const char *dst_path) {
-  int          ret_val      = EXIT_SUCCESS;
-  const size_t src_path_len = strlen(src_path);
-  const size_t cmd_len      = strlen(BASE_SO_CMD_FMT) -
-                         (FMT_STR_LEN * STR_FMT_INSTANCES) +
-                         (src_path_len * STR_FMT_INSTANCES);
-
-#ifdef HTMC_CGI_INTF
-  char *cmd = (char *)malloc(cmd_len);
-
-  if (!cmd) {
-    log_fatal("ran out of memory");
-    ret_val = EXIT_FAILURE;
-    goto cleanup;
-  }
-
-  sprintf(cmd, BASE_SO_CMD_FMT, src_path, src_path, src_path, src_path);
-  ret_val = system(cmd);
-
-cleanup:
-  safe_free(cmd);
-#endif
-
-  return ret_val;
+void log_fatal(const char *message) {
+  fprintf(stderr, "htmc fatal error: %s.\n", message);
 }

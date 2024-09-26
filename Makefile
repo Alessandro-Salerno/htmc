@@ -53,7 +53,7 @@ obj/%.o: src/%.c
 
 lib/%.o: src/%.c
 	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) -fPIC -g -c $^ -o $@
+	$(CC) $(CFLAGS) -fPIC -g -w -c $^ -o $@
 
 obj:
 	@mkdir -p obj/

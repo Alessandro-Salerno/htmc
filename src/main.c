@@ -30,11 +30,11 @@
 #include "libhtmc/libhtmc.h"
 
 void run_c_file(const char *c_file_path) {
-  const char *command     = "gcc -O2 -fPIC -Iinclude/ ";
-  int         so_path_len = strlen(c_file_path) + 4;
-  char       *so_path     = calloc(so_path_len, sizeof(char));
-  char       *obj_path    = calloc(so_path_len, sizeof(char));
-  int         (*htmc_main)(htmc_handover_t *) = NULL;
+  const char *command                 = "gcc -O2 -fPIC -Iinclude/ ";
+  int         so_path_len             = strlen(c_file_path) + 4;
+  char       *so_path                 = calloc(so_path_len, sizeof(char));
+  char       *obj_path                = calloc(so_path_len, sizeof(char));
+  int (*htmc_main)(htmc_handover_t *) = NULL;
   sprintf(so_path, "%s%s", c_file_path, ".so");
   sprintf(obj_path, "%s%s", c_file_path, ".o");
 
