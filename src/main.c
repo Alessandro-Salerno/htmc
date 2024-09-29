@@ -133,6 +133,7 @@ int main(int argc, char *argv[]) {
     return cli_run(argc, argv);
   } else {
     log_fatal("unrecognized option");
+    return EXIT_FAILURE;
   }
 
   return EXIT_SUCCESS;
