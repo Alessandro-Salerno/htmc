@@ -22,4 +22,63 @@
 
 #include <stdio.h>
 
-#include "load.h"
+#include "emit.h"
+
+#define HTMC_C_BASE                        \
+  "#include \"libhtmc/libhtmc.h\"\n\n"     \
+  "void htmc_main(htmc_handover_t *h) {\n" \
+  "htmc_setup(h);\n"
+
+#define HTMC_C_BASE_END "}"
+
+#define HTMC_HTML_BASE "htmc_printf(\""
+
+#define HTMC_HTML_BASE_END "\");\n"
+
+void emit_str(FILE *dst_file, const char *str) {
+  fprintf(dst_file, "%s", str);
+}
+
+void emit_base(FILE *dst_file) {
+  fprintf(dst_file, HTMC_C_BASE);
+}
+
+void emit_end(FILE *dst_file) {
+  fprintf(dst_file, "%s", HTMC_C_BASE_END);
+}
+
+void emit_html_base(FILE *dst_file) {
+  fprintf(dst_file, "%s", HTMC_HTML_BASE);
+}
+
+void emit_html_end(FILE *dst_file) {
+  fprintf(dst_file, "%s", HTMC_HTML_BASE_END);
+}
+
+void emit_char(FILE *dst_file, char chr) {
+  fputc(chr, dst_file);
+}
+
+void emit_char_escaped(FILE *dst_file, char chr) {
+  switch (chr) {
+  case '"':
+    emit_str(dst_file, "\\\"");
+
+  case '\\':
+    emit_str(dst_file, "\\\\");
+
+  case '\n':
+    emit_str(dst_file, "\\n");
+
+  case '\r':
+    emit_str(dst_file, "\\r");
+
+  case '\t':
+    emit_str(dst_file, "    ");
+
+  default:
+    if (chr > 31) {
+      emit_char(dst_file, chr);
+    }
+  }
+}

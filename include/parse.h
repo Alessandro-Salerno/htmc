@@ -21,3 +21,7 @@
 // SOFTWARE.
 
 #pragma once
+
+#include <stdio.h>
+
+int parse_and_emit(FILE *src_file, FILE *dst_file);

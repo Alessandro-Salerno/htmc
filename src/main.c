@@ -28,6 +28,7 @@
 
 #include "libhtmc/libhtmc-internals.h"
 #include "libhtmc/libhtmc.h"
+#include "parse.h"
 
 void run_c_file(const char *c_file_path) {
   const char *command                 = "gcc -O2 -fPIC -Iinclude/ ";
@@ -178,6 +179,10 @@ int main(int argc, char *argv[]) {
   }
 
   FILE *f = fopen(file_path, "r");
-  htmc_find_segments(f, file_path);
+  // htmc_find_segments(f, file_path);
+  //
+  FILE *d = fopen("test.c", "w");
+  parse_and_emit(f, d);
+  fclose(d);
   fclose(f);
 }

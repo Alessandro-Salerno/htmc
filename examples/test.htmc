@@ -4,10 +4,16 @@
   </head>
 
   <body>
-    <?c>
+    <?c
       int param = 0;
       int ret = htmc_query_scanf("param=%d", &param);
       htmc_printf("%d %d", ret, param);
+    ?>
+
+    <labeL> Test spazio </label>
+
+    <?c
+      int x, y;
     ?>
   </body>
 </html>
