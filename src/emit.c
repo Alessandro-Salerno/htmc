@@ -27,7 +27,7 @@
 #define HTMC_C_BASE                        \
   "#include \"libhtmc/libhtmc.h\"\n\n"     \
   "void htmc_main(htmc_handover_t *h) {\n" \
-  "htmc_setup(h);\n"
+  "htmc_bind(h);\n"
 
 #define HTMC_C_BASE_END "}"
 

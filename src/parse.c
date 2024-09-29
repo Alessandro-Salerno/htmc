@@ -24,8 +24,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 #include "emit.h"
 #include "log.h"
@@ -62,6 +60,7 @@
 typedef struct {
   uint64_t lineno;
   uint64_t chr_index;
+  uint64_t scope_sum;
 } parse_status_t;
 
 inline void reset_parse_status(parse_status_t *parse_status) {
@@ -112,61 +111,60 @@ bool collect_emit_c(FILE           *src_file,
   bool line_comment = false;
   bool ml_comment   = false;
   bool comment      = line_comment || ml_comment;
-  int  scope_count  = 0;
   char last         = 0;
+  char c            = 0;
 
-  while (!feof(src_file)) {
-    char c = fgetc(src_file);
-
+  while ((c = fgetc(src_file))) {
     if (!string && IS_LINE_COMMENT(last, c)) {
       line_comment = true;
+      goto emit;
     }
 
     if (!string && IS_ML_COMMENT(last, c)) {
       ml_comment = true;
+      goto emit;
     }
 
     if (IS_EOL(c)) {
       string       = false;
       line_comment = false;
       reset_parse_status(parse_status);
+      goto emit;
     }
 
     if (IS_ML_COMMNENT_END(last, c)) {
       ml_comment = false;
+      goto emit;
     }
-
-    // Update comment status
-    comment = line_comment || ml_comment;
 
     // If there's a backslash in a string
     if (string && !escape && IS_ESCAPE(c)) {
       escape = true;
-      goto raw_emit;
+      goto emit;
     }
 
     // If there is a quote sign inside a string
     // preceded by an escpae backslash
     if (string && escape && IS_STR_DELIM(c)) {
       escape = false;
-      goto raw_emit;
+      goto emit;
     }
 
     // If char is " string might begin or end
     if (!escape && !comment && IS_STR_DELIM(c)) {
       string = !string;
-      goto raw_emit;
+      goto emit;
     }
 
     // Error if code contains end of main scope
-    if (!string && IS_EOS(c) && 0 == scope_count) {
+    if (!string && IS_EOS(c) && 0 == parse_status->scope_sum) {
       return false;
     }
 
     // If char is ';'
     if (!string && !comment && IS_DELIM(c)) {
       terminated = true;
-      goto raw_emit;
+      goto emit;
     }
 
     // Update terminated status otherwise
@@ -178,27 +176,29 @@ bool collect_emit_c(FILE           *src_file,
     }
 
     // Update scope sum
-    scope_count += IS_SCOPE(c);
-    scope_count -= IS_EOS(c);
+    parse_status->scope_sum += IS_SCOPE(c);
+    parse_status->scope_sum -= IS_EOS(c);
 
     escape = false;
     string = IS_STR_DELIM(c);
 
-  emit:
     if (IS_TAG_FIT(last)) {
       emit_char(dst_file, last);
     }
     if (!IS_TAG_FIT(c)) {
-    raw_emit:
+    emit:
       emit_char(dst_file, c);
     }
-    last = c;
+    // Update comment status
+    comment = line_comment || ml_comment;
+    last    = c;
   }
+
   return false;
 }
 
 int parse_and_emit(FILE *src_file, FILE *dst_file) {
-  parse_status_t parse_status;
+  parse_status_t parse_status = {0};
 
   emit_base(dst_file);
   while (find_tag_and_emit(src_file, dst_file, &parse_status)) {

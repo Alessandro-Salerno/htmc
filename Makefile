@@ -22,7 +22,7 @@
 
 
 CC=gcc
-CFLAGS=-O2 -std=c2x -Wno-unused-parameter -Iinclude/
+CFLAGS=-O2 -std=c2x -Wno-unused-parameter -Iinclude/ -flto
 BIN=bin/
 EXEC=$(BIN)/htmc
 LIB=$(BIN)/libhtmc.a
@@ -42,7 +42,7 @@ htmc: $(EXEC)
 libhtmc: $(LIB)
 
 $(EXEC): obj $(OBJ)
-	$(CC) $(OBJ) -o $(EXEC)
+	$(CC) -flto $(OBJ) -o $(EXEC)
 
 $(LIB): obj $(RELOC_OBJ)
 	ar rcs $(LIB) $(RELOC_OBJ)
