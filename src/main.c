@@ -34,21 +34,22 @@
 #define HTMC_CLI_TRANSLATE "-t"
 #define HTMC_CLI_RUN       "-r"
 
-#define HTMC_DISPLAY_HELP                                        \
-  "Usage: htmc [<option>] [<filename>]\n"                        \
-  "\n"                                                           \
-  "One of the following options must be specified:\n"            \
-  "\t-h                               Shows this message\n"      \
-  "\t-l                               Shows the MIT license\n"   \
-  "\t-t <input file> <output file>    Transaltes an htmc file\n" \
-  "\t-r <input file>                  Compiles and runs an htmc file\n"
+const char *TMC_DISPLAY_HELP =
+    "Usage: htmc [<option>] [<filename>]\n"
+    "\n"
+    "One of the following options must be specified:\n"
+    "\t-h                               Shows this message\n"
+    "\t-l                               Shows the MIT license\n"
+    "\t-t <input file> <output file>    Transaltes an htmc file\n"
+    "\t-r <input file>                  Compiles and runs an htmc file\n";
 
 const char *HTMC_DISPLAY_LICENSE =
     "MIT License"
     "\n"
     "Copyright (c) 2024 Alessandro Salerno\n"
     "\n"
-    "Permission is hereby granted, free of charge, to any person obtaining a "
+    "Permission is hereby granted, free of charge, to any person obtaining "
+    "a "
     "copy\n"
     "of this software and associated documentation files (the Software"
     "), to deal\n"
@@ -56,22 +57,29 @@ const char *HTMC_DISPLAY_LICENSE =
     "rights\n"
     "to use, copy, modify, merge, publish, distribute, sublicense, and/or "
     "sell\n"
-    "copies of the Software, and to permit persons to whom the Software is\n"
+    "copies of the Software, and to permit persons to whom the Software "
+    "is\n"
     "furnished to do so, subject to the following conditions:\n"
     "\n"
-    "The above copyright notice and this permission notice shall be included "
+    "The above copyright notice and this permission notice shall be "
+    "included "
     "in all\n"
     "copies or substantial portions of the Software.\n"
     "\n"
     "THE SOFTWARE IS PROVIDED AS IS "
     ", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n"
-    "IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n"
-    "FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL "
+    "IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF "
+    "MERCHANTABILITY,\n"
+    "FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT "
+    "SHALL "
     "THE\n"
-    "AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n"
-    "LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING "
+    "AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR "
+    "OTHER\n"
+    "LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, "
+    "ARISING "
     "FROM,\n"
-    "OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN "
+    "OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER "
+    "DEALINGS IN "
     "THE\nSOFTWARE.\n";
 
 int cli_transalte(int argc, char *argv[]) {
