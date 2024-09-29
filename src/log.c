@@ -27,3 +27,7 @@
 void log_fatal(const char *message) {
   fprintf(stderr, "htmc fatal error: %s.\n", message);
 }
+
+void log_info(const char *message) {
+  printf("htmc: %s.\n", message);
+}

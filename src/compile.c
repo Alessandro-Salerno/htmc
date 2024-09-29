@@ -22,8 +22,6 @@
 
 // Temporary fix to avoid issues
 #include <stdio.h>
-#define HTMC_CGI_INTF
-
 #include <stdlib.h>
 #include <string.h>
 

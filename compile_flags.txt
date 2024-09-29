@@ -1,2 +1,3 @@
 -Iinclude/
 -std=c2x
+-DHTMC_CGI_INTF
