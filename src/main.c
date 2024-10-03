@@ -34,7 +34,7 @@
 #define HTMC_CLI_TRANSLATE "-t"
 #define HTMC_CLI_RUN       "-r"
 
-const char *TMC_DISPLAY_HELP =
+const char *HTMC_DISPLAY_HELP =
     "Usage: htmc [<option>] [<filename>]\n"
     "\n"
     "One of the following options must be specified:\n"
