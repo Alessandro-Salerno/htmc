@@ -80,7 +80,7 @@ const char *HTMC_DISPLAY_HELP =
     "\n"
     "Example: translate `test.htmc` to `pagegen.c` without printing the splash "
     "text\n"
-    "\t$ htmc -ni -t test.htmc -o pagegen.c\n"
+    "\t$ htmc -ns -t test.htmc -o pagegen.c\n"
     "\n"
     "If no option is specified, the program will launch in CGI mode.\n"
     "This allows other programs to call htmc for on-demande execution.\n";
@@ -135,10 +135,6 @@ void print_program_version() {
 }
 
 void print_program_info() {
-  if (cliStopSplashText) {
-    return;
-  }
-
   print_program_version();
   printf("Copyright (c) 2024 Alessandro Salerno\n");
   printf("This software is under MIT license. Use -l option for more "
@@ -281,6 +277,7 @@ int main(int argc, char *argv[]) {
     // -v, --version
     else if (0 == strcmp(HTMC_CLI_VERSION, argument) ||
              0 == strcmp(HTMC_CLI_FULL_VERSION, argument)) {
+      cliStopSplashText = true;
       SET_FCN(cli_version);
     }
 
@@ -314,7 +311,10 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  print_program_info();
+  if (!cliStopSplashText) {
+    print_program_info();
+  }
+
   if (fcn_cli) {
     return fcn_cli();
   }
