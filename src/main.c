@@ -35,13 +35,16 @@
 #define HTMC_CLI_RUN       "-r"
 
 const char *HTMC_DISPLAY_HELP =
-    "Usage: htmc [<option>] [<filename>]\n"
+    "Usage: htmc [<option>] [<arguments>]\n"
     "\n"
     "One of the following options must be specified:\n"
     "\t-h                               Shows this message\n"
     "\t-l                               Shows the MIT license\n"
     "\t-t <input file> <output file>    Transaltes an htmc file\n"
-    "\t-r <input file>                  Compiles and runs an htmc file\n";
+    "\t-r <input file>                  Compiles and runs an htmc file\n"
+    "\n"
+    "If no option is specified, the program will launch in CGI mode.\n"
+    "This allows other programs to call htmc for on-demande execution.\n";
 
 const char *HTMC_DISPLAY_LICENSE =
     "MIT License"
@@ -119,14 +122,22 @@ int cli_run(int argc, char *argv[]) {
   return EXIT_FAILURE;
 }
 
-int main(int argc, char *argv[]) {
-  if (2 > argc) {
-    log_fatal("insufficient number of arguments, use -h option for help");
+int cli_cgi(const char *query_string) {
+  if (!query_string) {
+    log_fatal("query not specified");
     return EXIT_FAILURE;
   }
 
+  return EXIT_SUCCESS;
+}
+
+int main(int argc, char *argv[]) {
+  if (2 > argc) {
+    return cli_cgi(getenv("QUERY_STRING"));
+  }
+
   printf("htmc (dev version)\n");
-  printf("Copyright (c) Alessandro Salerno 2024\n");
+  printf("Copyright (c) 2024 Alessandro Salerno\n");
   printf("This software is under MIT license. Use -l option for more "
          "information.\n\n");
 
