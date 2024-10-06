@@ -23,23 +23,33 @@
 
 CC=gcc
 CFLAGS=-O2 -std=c2x -Wno-unused-parameter -Iinclude/ -flto -DHTMC_CGI_INTF -DEXT_HTMC_BUILD="\"$(shell date +%y.%m.%d)\""
-BIN=bin/
+BIN=bin
 EXEC=$(BIN)/htmc
 LIB=$(BIN)/libhtmc.a
+HTMC_OS=$(shell uname -s | tr A-Z a-z)
+
+ifeq ($(OS),Windows_NT)
+	HTMC_OS=windows
+endif
 
 rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard ,$d, $2) $(filter $(subst *, %, $2),$d))
-SRC=$(call rwildcard, src, *.c)
+SRC=$(call rwildcard, src/common, *.c)
+SRC+=$(call rwildcard, src/$(HTMC_OS), *.c)
 OBJ=$(patsubst src/%.c,obj/%.o, $(SRC))
 RELOC_OBJ=$(patsubst src/%.c,lib/%.o, $(SRC))
 
 .PHONEY: all
-all: obj $(OBJ) $(RELOC_OBJ) $(EXEC) $(LIB)
+all: info obj $(OBJ) $(RELOC_OBJ) $(EXEC) $(LIB)
+	@echo Finished!
 
 .PHONEY: htmc
 htmc: $(EXEC)
 
 .PHONEY: libhtmc
 libhtmc: $(LIB)
+
+info:
+	@echo Compiling for $(HTMC_OS)
 
 $(EXEC): obj $(OBJ)
 	$(CC) -flto $(OBJ) -o $(EXEC)
