@@ -52,6 +52,8 @@
 #define HTMC_CLI_LICENSE   "-l"
 #define HTMC_CLI_VERSION   "-v"
 #define HTMC_CLI_TRANSLATE "-t"
+#define HTMC_CLI_COMPILE   "-c"
+#define HTMC_CLI_BUILD     "-b"
 #define HTMC_CLI_LOAD_SO   "-s"
 #define HTMC_CLI_RUN       "-r"
 
@@ -59,6 +61,8 @@
 #define HTMC_CLI_FULL_LICENSE   "--license"
 #define HTMC_CLI_FULL_VERSION   "--version"
 #define HTMC_CLI_FULL_TRANSLATE "--translate"
+#define HTMC_CLI_FULL_COMPILE   "--compile"
+#define HTMC_CLI_FULL_BUILD     "--build"
 #define HTMC_CLI_FULL_LOAD_SO   "--load-shared"
 #define HTMC_CLI_FULL_RUN       "--run"
 
@@ -66,17 +70,19 @@ const char *HTMC_DISPLAY_HELP =
     "Usage: htmc [<flag(s)>] [<option>] [<argument(s)>]\n"
     "\n"
     "Optional flags:\n"
-    "\t-ns, --no-splash                     Disables the program info splash "
+    "\t-ns, --no-splash                     Display the program info splash "
     "text\n"
-    "\t-o, --output-path {<file>|<path>}    Sets the output file or directory\n"
+    "\t-o, --output-path {<file>|<path>}    Set the output file or directory\n"
     "\n"
     "Mutually exclusive options:\n"
-    "\t-h, --help           Shows this message\n"
-    "\t-l, --license        Shows the MIT license\n"
-    "\t-v, --version        Shows the htmc version string\n"
-    "\t-t, --translate      Transaltes an htmc file\n"
-    "\t-s, --load-shared    Loads and runs a shared object built with htmc\n"
-    "\t-r, --run            Translate, compile, and runs an htmc file\n"
+    "\t-h, --help           Display this message\n"
+    "\t-l, --license        Display the MIT license\n"
+    "\t-v, --version        Display the htmc version string\n"
+    "\t-t, --translate      Transalte htmc source file into C source file\n"
+    "\t-c, --compile        Compile a C source file to hmtc shared object\n"
+    "\t-b, --build          Build shared object from htmc source file\n"
+    "\t-s, --load-shared    Load and run an htmc shared object\n"
+    "\t-r, --run            Run an htmc source file\n"
     "\n"
     "Example: translate `test.htmc` to `pagegen.c` without printing the splash "
     "text\n"
@@ -305,7 +311,6 @@ int main(int argc, char *argv[]) {
     }
 
     else {
-      print_program_info();
       log_fatal("too many input files");
       return EXIT_FAILURE;
     }
@@ -319,5 +324,5 @@ int main(int argc, char *argv[]) {
     return fcn_cli();
   }
 
-  return EXIT_FAILURE;
+  return cli_cgi(getenv("QUERY_STRING"));
 }
