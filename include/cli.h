@@ -20,47 +20,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#pragma once
+
 #include <stdbool.h>
-#include <stdio.h>
-#include <string.h>
 
-#include "log.h"
+typedef int (*cli_fcn_t)(void *target, const char *next);
+typedef int (*cli_exec_t)(const char *input_file, const char *output_file);
 
-const char *const HTMC_STR_LOG_LEVELS[] = {"all",
-                                           "info",
-                                           "warning",
-                                           "error",
-                                           "off"};
+typedef struct {
+  const char *short_option;
+  const char *full_option;
+  cli_fcn_t   handler;
+  void       *target_variable;
+  bool        has_argument;
+} cli_opt_desc_t;
 
-log_lvl_t logLevel;
-bool      logSafeMode = false;
+// Support functions
+void print_program_version();
+void print_program_info();
 
-void log_fatal(const char *message) {
-  if (HTMC_LOG_LEVEL_ERROR >= logLevel || !logSafeMode) {
-    fprintf(stderr, "htmc fatal error: %s.\n", message);
-  }
-}
+// Handler functions (cli_fcn_t)
+int flag_no_splash(void *target, const char *next);
+int flag_output(void *target, const char *next);
+int flag_log_level(void *target, const char *next);
 
-void log_info(const char *message) {
-  if (HTMC_LOG_LEVEL_INFO >= logLevel || !logSafeMode) {
-    printf("htmc: %s.\n", message);
-  }
-}
-
-void log_set_level(log_lvl_t lvl) {
-  logLevel = lvl;
-}
-
-void log_set_safe() {
-  logSafeMode = true;
-}
-
-int log_translate_level(const char *lvl_str) {
-  for (int i = 0; i < sizeof HTMC_STR_LOG_LEVELS / sizeof(char *); i++) {
-    if (0 == strcmp(lvl_str, HTMC_STR_LOG_LEVELS[i])) {
-      return i;
-    }
-  }
-
-  return -1;
-}
+// Executable functions (cli_exec_t)
+int cli_help(const char *input_file, const char *output_file);
+int cli_license(const char *input_file, const char *output_file);
+int cli_version(const char *input_file, const char *output_file);
+int cli_translate(const char *input_file, const char *output_file);
+int cli_run(const char *input_file, const char *output_file);
+int cli_load_shared(const char *input_file, const char *output_file);
+int cli_run(const char *input_file, const char *output_file);

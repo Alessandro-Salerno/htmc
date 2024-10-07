@@ -26,27 +26,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "libhtmc/libhtmc-internals.h"
-#include "libhtmc/libhtmc.h"
-#include "load.h"
+#include "cli.h"
 #include "log.h"
-#include "parse.h"
-
-// This macro is used to avoid too many if
-// statements in the main function
-// Propose a better way if you have one
-#define SET_FCN(f)                                                  \
-  if (fcn_cli) {                                                    \
-    log_fatal("more than one mutually exclusive option specified"); \
-    return EXIT_FAILURE;                                            \
-  }                                                                 \
-  fcn_cli = f;
 
 #define HTMC_FLAG_NO_SPLASH "-ns"
 #define HTMC_FLAG_OUTPUT    "-o"
+#define HTMC_FLAG_LOG_LVL   "-ll"
 
 #define HTMC_FLAG_FULL_NO_SPLASH "--no-splash"
 #define HTMC_FLAG_FULL_OUTPUT    "--output-path"
+#define HTMC_FLAG_FULL_LOG_LVL   "--log-level"
 
 #define HTMC_CLI_HELP      "-h"
 #define HTMC_CLI_LICENSE   "-l"
@@ -66,137 +55,57 @@
 #define HTMC_CLI_FULL_LOAD_SO   "--load-shared"
 #define HTMC_CLI_FULL_RUN       "--run"
 
-const char *HTMC_DISPLAY_HELP =
-    "Usage: htmc [<flag(s)>] [<option>] [<argument(s)>]\n"
-    "\n"
-    "Optional flags:\n"
-    "\t-ns, --no-splash                     Display the program info splash "
-    "text\n"
-    "\t-o, --output-path {<file>|<path>}    Set the output file or directory\n"
-    "\n"
-    "Mutually exclusive options:\n"
-    "\t-h, --help           Display this message\n"
-    "\t-l, --license        Display the MIT license\n"
-    "\t-v, --version        Display the htmc version string\n"
-    "\t-t, --translate      Transalte htmc source file into C source file\n"
-    "\t-c, --compile        Compile a C source file to hmtc shared object\n"
-    "\t-b, --build          Build shared object from htmc source file\n"
-    "\t-s, --load-shared    Load and run an htmc shared object\n"
-    "\t-r, --run            Run an htmc source file\n"
-    "\n"
-    "Example: translate `test.htmc` to `pagegen.c` without printing the splash "
-    "text\n"
-    "\t$ htmc -ns -t test.htmc -o pagegen.c\n"
-    "\n"
-    "If no option is specified, the program will launch in CGI mode.\n"
-    "This allows other programs to call htmc for on-demande execution.\n";
-
-const char *HTMC_DISPLAY_LICENSE =
-    "MIT License"
-    "\n"
-    "Copyright (c) 2024 Alessandro Salerno\n"
-    "\n"
-    "Permission is hereby granted, free of charge, to any person obtaining "
-    "a "
-    "copy\n"
-    "of this software and associated documentation files (the Software"
-    "), to deal\n"
-    "in the Software without restriction, including without limitation the "
-    "rights\n"
-    "to use, copy, modify, merge, publish, distribute, sublicense, and/or "
-    "sell\n"
-    "copies of the Software, and to permit persons to whom the Software "
-    "is\n"
-    "furnished to do so, subject to the following conditions:\n"
-    "\n"
-    "The above copyright notice and this permission notice shall be "
-    "included "
-    "in all\n"
-    "copies or substantial portions of the Software.\n"
-    "\n"
-    "THE SOFTWARE IS PROVIDED AS IS "
-    ", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n"
-    "IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF "
-    "MERCHANTABILITY,\n"
-    "FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT "
-    "SHALL "
-    "THE\n"
-    "AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR "
-    "OTHER\n"
-    "LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, "
-    "ARISING "
-    "FROM,\n"
-    "OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER "
-    "DEALINGS IN "
-    "THE\nSOFTWARE.\n";
+#define HTMC_VPTR_FALSE (void *)0
+#define HTMC_VPTR_TRUE  (void *)1
 
 // CLI Flags and options
 // These are global so they're easier to access
 const char *cliInputFile             = NULL;
 const char *cliOutputFileOrDirectory = NULL;
 bool        cliStopSplashText        = false;
+bool        logLevelSet              = false;
 
-void print_program_version() {
-  printf("htmc version %s\n", EXT_HTMC_BUILD);
-}
+cli_opt_desc_t matches[] = {
+    // Mutually exclusive options
+    {HTMC_CLI_HELP, HTMC_CLI_FULL_HELP, NULL, NULL, false},
+    {HTMC_CLI_LICENSE, HTMC_CLI_FULL_LICENSE, NULL, NULL, false},
+    {HTMC_CLI_VERSION, HTMC_CLI_FULL_VERSION, NULL, NULL, false},
+    {HTMC_CLI_TRANSLATE, HTMC_CLI_FULL_TRANSLATE, NULL, NULL, false},
+    {HTMC_CLI_COMPILE, HTMC_CLI_FULL_COMPILE, NULL, NULL, false},
+    {HTMC_CLI_BUILD, HTMC_CLI_FULL_BUILD, NULL, NULL, false},
+    {HTMC_CLI_LOAD_SO, HTMC_CLI_FULL_LOAD_SO, NULL, NULL, false},
+    {HTMC_CLI_RUN, HTMC_CLI_FULL_RUN, NULL, NULL, false},
 
-void print_program_info() {
-  print_program_version();
-  printf("Copyright (c) 2024 Alessandro Salerno\n");
-  printf("This software is under MIT license. Use -l option for more "
-         "information.\n\n");
-}
+    // Optional flags
+    {HTMC_FLAG_NO_SPLASH,
+     HTMC_FLAG_FULL_NO_SPLASH,
+     flag_no_splash,
+     &cliStopSplashText,
+     false},
 
-int cli_help() {
-  printf("%s", HTMC_DISPLAY_HELP);
-  return EXIT_SUCCESS;
-}
+    {HTMC_FLAG_OUTPUT,
+     HTMC_FLAG_FULL_OUTPUT,
+     flag_output,
+     &cliOutputFileOrDirectory,
+     true},
 
-int cli_license() {
-  printf("%s", HTMC_DISPLAY_LICENSE);
-  return EXIT_SUCCESS;
-}
+    {HTMC_FLAG_LOG_LVL,
+     HTMC_FLAG_FULL_LOG_LVL,
+     flag_log_level,
+     &logLevelSet,
+     true},
+};
 
-int cli_version() {
-  print_program_version();
-  return EXIT_SUCCESS;
-}
-
-int cli_translate() {
-  if (!cliInputFile) {
-    log_fatal("input file required but not provided");
-    return EXIT_FAILURE;
-  }
-
-  const char *src_file_path = cliInputFile;
-  const char *dst_file_path = cliOutputFileOrDirectory;
-
-  FILE *src_file = fopen(src_file_path, "r");
-  if (!src_file) {
-    log_fatal("invalid input file, no such file");
-    return EXIT_FAILURE;
-  }
-
-  FILE *dst_file = fopen(dst_file_path, "w");
-  if (!src_file) {
-    log_fatal("invalid output file");
-    return EXIT_FAILURE;
-  }
-
-  int r = parse_and_emit(src_file, dst_file);
-  if (EXIT_SUCCESS == r) {
-    log_info("done");
-    return r;
-  }
-
-  log_fatal("unable to complete correctly");
-  return r;
-}
-
-int cli_run() {
-  log_fatal("operation not supported yet");
-  return EXIT_FAILURE;
-}
+cli_exec_t exec_matches[] = {
+    cli_help,
+    cli_license,
+    cli_version,
+    cli_translate,
+    NULL, // cli_compile
+    NULL, // cli_build
+    cli_load_shared,
+    cli_run,
+};
 
 int cli_cgi(const char *query_string) {
   if (!query_string) {
@@ -207,43 +116,67 @@ int cli_cgi(const char *query_string) {
   return EXIT_SUCCESS;
 }
 
-int cli_load_shared() {
-  if (!cliInputFile) {
-    log_fatal("input file required but not provided");
-    return EXIT_FAILURE;
-  }
-
-  const char *so_file_path = cliInputFile;
-  const char *query_string = getenv("QUERY_STRING");
-  if (!query_string) {
-    query_string = "";
-  }
-
-  htmc_handover_t handover = {.variant_id          = HTMC_BASE_HANDOVER,
-                              .request_method      = "GET",
-                              .query_string        = query_string,
-                              .query_has_params    = false,
-                              .query_param_sep_off = 0,
-                              .vprintf             = impl_debug_vprintf,
-                              .query_vscanf        = impl_debug_query_vscanf,
-                              .form_vscanf         = impl_debug_form_vscanf,
-                              .alloc               = impl_debug_alloc,
-                              .free                = impl_debug_free,
-                              .cleanup             = impl_debug_cleanup};
-
-  return run_htmc_so(so_file_path, &handover);
-}
-
 int main(int argc, char *argv[]) {
   if (2 > argc) {
     return cli_cgi(getenv("QUERY_STRING"));
   }
 
-  int (*fcn_cli)() = NULL;
+  cli_exec_t fcn_cli = NULL;
 
   for (int i = 1; i < argc; i++) {
-    const char *argument = argv[i];
+    bool        found_matching_option = false;
+    const char *argument              = argv[i];
+    const char *next                  = NULL;
+    if (argc - i != i) {
+      next = argv[i + 1];
+    }
 
+    for (int j = 0;
+         !found_matching_option && j < sizeof matches / sizeof(cli_opt_desc_t);
+         j++) {
+      cli_opt_desc_t opt_desc = matches[j];
+
+      if (0 != strcmp(opt_desc.short_option, argument) &&
+          0 != strcmp(opt_desc.full_option, argument)) {
+        continue;
+      }
+
+      found_matching_option = true;
+      if (opt_desc.has_argument) {
+        i++; // Advance outer loop to avoid issues
+      }
+
+      // If the handler is for mutually exclusive option
+      if (NULL == opt_desc.handler && NULL == opt_desc.target_variable) {
+        if (NULL != fcn_cli) {
+          log_fatal("more than one mutually exclusive option specified");
+          return EXIT_FAILURE;
+        }
+
+        fcn_cli = exec_matches[j];
+        break;
+      }
+
+      // If the handler isfor a non-mutually exclusive option
+      int fcn_ecode = opt_desc.handler(opt_desc.target_variable, next);
+
+      if (EXIT_SUCCESS != fcn_ecode) {
+        return fcn_ecode;
+      }
+    }
+
+    // If no mathcing option was found
+    // This argument is treated as the input file
+    if (!found_matching_option) {
+      if (NULL != cliInputFile) {
+        log_fatal("too many input files");
+        return EXIT_FAILURE;
+      }
+
+      cliInputFile = argument;
+    }
+
+    /*
     // -ns, no-splash
     if (0 == strcmp(HTMC_FLAG_NO_SPLASH, argument) ||
         0 == strcmp(HTMC_FLAG_FULL_NO_SPLASH, argument)) {
@@ -265,6 +198,12 @@ int main(int argc, char *argv[]) {
       }
 
       cliOutputFileOrDirectory = argv[++i];
+      continue;
+    }
+
+    // -ll, --log-level
+    else if (0 == strcmp(HTMC_FLAG_LOG_LVL, argument) ||
+             0 == strcmp(HTMC_FLAG_FULL_LOG_LVL, argument)) {
       continue;
     }
 
@@ -314,14 +253,17 @@ int main(int argc, char *argv[]) {
       log_fatal("too many input files");
       return EXIT_FAILURE;
     }
+    */
   }
+
+  log_set_safe();
 
   if (!cliStopSplashText) {
     print_program_info();
   }
 
   if (fcn_cli) {
-    return fcn_cli();
+    return fcn_cli(cliInputFile, cliOutputFileOrDirectory);
   }
 
   return cli_cgi(getenv("QUERY_STRING"));
