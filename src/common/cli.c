@@ -230,8 +230,8 @@ int cli_load_shared(const char *input_file, const char *output_file) {
                               .query_has_params    = false,
                               .query_param_sep_off = 0,
                               .vprintf             = impl_debug_vprintf,
-                              .query_vscanf        = impl_debug_query_vscanf,
-                              .form_vscanf         = impl_debug_form_vscanf,
+                              .query_vscanf        = impl_base_query_vscanf,
+                              .form_vscanf         = impl_base_form_vscanf,
                               .alloc               = impl_debug_alloc,
                               .free                = impl_debug_free,
                               .cleanup             = impl_debug_cleanup};
