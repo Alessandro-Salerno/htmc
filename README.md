@@ -51,5 +51,9 @@ The easiest (and slowest) way to use htmc is
 
 _TO BE CONTINUED_
 
+# How to build htmc
+
+_TO BE CONTINUED_
+
 # License
 htmc is distributed under the terms of the MIT license. See [LICENSE](LICENSE) for more information.
