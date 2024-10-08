@@ -86,9 +86,9 @@ libhtmc contains all htmc functions. The library can be used in other native pro
 
 
 ## CGI web server
-The easiest (and slowest) way to use htmc is to create a simple CGI web server in a high level language and invoke htmc when handling request. In this example, [Golang]() is used as it's one of the simplest native languages that supports these features out of the box.
+The easiest (and slowest) way to use htmc is to create a simple CGI web server in a high level language and invoke htmc when handling request. In this example, [Golang](https://go.dev/) is used as it's one of the simplest native languages that supports these features out of the box.
 
-1. Write and compile a simple CGI web server in go
+1. Write and compile a simple CGI web server in Go
 
 ```go
 package main
