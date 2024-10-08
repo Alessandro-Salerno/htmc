@@ -31,6 +31,18 @@
 #include "log.h"
 #include "parse.h"
 
+#define SET_IF_NULL(test, target, value) \
+  if (NULL == test) {                    \
+    target = value;                      \
+  }
+
+#define SET_IF_NULL_ELSE(test, target, value_null, value_good) \
+  if (NULL == test) {                                          \
+    target = value_null;                                       \
+  } else {                                                     \
+    target = value_good;                                       \
+  }
+
 const char *HTMC_DISPLAY_HELP =
     "Usage: htmc [<flag(s)>] [<option>] [<argument(s)>]\n"
     "\n"
@@ -50,6 +62,20 @@ const char *HTMC_DISPLAY_HELP =
     "\t-b, --build          Build shared object from htmc source file\n"
     "\t-s, --load-shared    Load and run an htmc shared object\n"
     "\t-r, --run            Run an htmc source file\n"
+    "\n"
+    "Environment variables:\n"
+    "\tQUERY_STRING       used in CGI and CLI mode to specify query "
+    "parameters\n"
+    "\tREQUEST_METHOD     used in CGI and CLI mode to specify the HTTP method\n"
+    "\tCONTENT_LENGTH     Used in CGI and CLI mode to specify the length of "
+    "the "
+    "reuqest body\n"
+    "\tCONTENT_TYPE       Used in CGI and CLI mode to specify the HTTP type of "
+    "the request body\n"
+    "\tREQUEST_BODY       Used in CLI mode to specify the contents of the HTTP "
+    "request body\n"
+    "\tPATH_TRANSLATED    Used in CGI mode to specify the path of the target "
+    "file\n"
     "\n"
     "Example: translate `test.htmc` to `pagegen.c` without printing the splash "
     "text\n"
@@ -219,16 +245,28 @@ int cli_load_shared(const char *input_file, const char *output_file) {
   }
 
   const char *so_file_path = input_file;
-  const char *query_string = getenv("QUERY_STRING");
-  if (!query_string) {
-    query_string = "";
-  }
+
+  const char *query_string     = getenv("QUERY_STRING");
+  const char *method           = getenv("REQUEST_METHOD");
+  const char *s_content_length = getenv("CONTENT_LENGTH");
+  const char *content_type     = getenv("CONTENT_TYPE");
+  const char *request_body     = getenv("REQUEST_BODY");
+  size_t      content_length   = 0;
+
+  SET_IF_NULL(query_string, query_string, "");
+  SET_IF_NULL(method, method, "GET");
+  SET_IF_NULL_ELSE(s_content_length, content_length, 0, atoi(s_content_length));
+  SET_IF_NULL(content_type, content_type, "text/plain");
+  SET_IF_NULL(request_body, request_body, "");
 
   htmc_handover_t handover = {.variant_id          = HTMC_BASE_HANDOVER,
-                              .request_method      = "GET",
+                              .request_method      = method,
                               .query_string        = query_string,
                               .query_has_params    = false,
                               .query_param_sep_off = 0,
+                              .content_length      = content_length,
+                              .content_type        = content_type,
+                              .request_body        = request_body,
                               .vprintf             = impl_debug_vprintf,
                               .query_vscanf        = impl_base_query_vscanf,
                               .form_vscanf         = impl_base_form_vscanf,

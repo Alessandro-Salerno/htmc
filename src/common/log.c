@@ -41,9 +41,15 @@ void log_fatal(const char *message) {
   }
 }
 
+void log_error(const char *message) {
+  if (HTMC_LOG_LEVEL_ERROR >= logLevel || !logSafeMode) {
+    fprintf(stderr, "htmc error:       %s.\n", message);
+  }
+}
+
 void log_info(const char *message) {
   if (HTMC_LOG_LEVEL_INFO >= logLevel || !logSafeMode) {
-    printf("htmc: %s.\n", message);
+    fprintf(stderr, "htmc info:        %s.\n", message);
   }
 }
 

@@ -29,7 +29,7 @@
 int impl_base_query_vscanf(htmc_handover_t *handover,
                            const char      *fmt,
                            va_list          args) {
-  if (0 >= handover->query_param_sep_off) {
+  if (0 == handover->query_param_sep_off) {
     handover->query_has_params = false;
     for (const char *cp = handover->query_string; *cp; cp++) {
       if ('?' == *cp) {

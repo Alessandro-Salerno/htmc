@@ -32,10 +32,13 @@ typedef enum htmc_handover_variant {
 typedef struct htmc_handover htmc_handover_t;
 typedef struct htmc_handover {
   const htmc_handover_variant_t variant_id;
-  const char                    request_method[5];
+  const char                   *request_method;
   const char                   *query_string;
   bool                          query_has_params;
   int                           query_param_sep_off;
+  size_t                        content_length;
+  const char                   *content_type;
+  const char                   *request_body;
 
   int (*vprintf)(htmc_handover_t *handover, const char *fmt, va_list args);
   int (*query_vscanf)(htmc_handover_t *handover, const char *fmt, va_list args);

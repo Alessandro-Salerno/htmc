@@ -37,18 +37,17 @@
 #define SO_EXT_INSTANCES  1
 
 const char *BASE_SO_CMD_FMT =
-    "$(cc) -O2 -fPIC -Iinclude/ -o %s.o -c %s "
-    "&& $(ld) -shared -o %s.so -L./bin --exclude-libs ALL --start-group "
+    "gcc -O2 -fPIC -Iinclude/ -c %s -o %s.o "
+    "&& ld -shared -o %s -L./bin --exclude-libs ALL --start-group "
     "-l:libhtmc.a %s.o --end-group";
 
 int compile_c_output(const char *src_path, const char *dst_path) {
   int          ret_val      = EXIT_SUCCESS;
   const size_t src_path_len = strlen(src_path);
-  const size_t cmd_len      = strlen(BASE_SO_CMD_FMT) -
-                         (FMT_STR_LEN * STR_FMT_INSTANCES) +
-                         (src_path_len * STR_FMT_INSTANCES);
+  const size_t cmd_len =
+      strlen(BASE_SO_CMD_FMT) - (FMT_STR_LEN * STR_FMT_INSTANCES) +
+      (src_path_len * STR_FMT_INSTANCES - 1) + strlen(dst_path) + 1;
 
-#ifdef HTMC_CGI_INTF
   char *cmd = (char *)malloc(cmd_len);
 
   if (!cmd) {
@@ -57,12 +56,11 @@ int compile_c_output(const char *src_path, const char *dst_path) {
     goto cleanup;
   }
 
-  sprintf(cmd, BASE_SO_CMD_FMT, src_path, src_path, src_path, src_path);
+  sprintf(cmd, BASE_SO_CMD_FMT, src_path, src_path, dst_path, src_path);
   ret_val = system(cmd);
 
 cleanup:
   safe_free(cmd);
-#endif
 
   return ret_val;
 }

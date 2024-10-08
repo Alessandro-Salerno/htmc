@@ -27,7 +27,12 @@
 #include <string.h>
 
 #include "cli.h"
+#include "compile.h"
+#include "libhtmc/libhtmc-internals.h"
+#include "libhtmc/libhtmc.h"
+#include "load.h"
 #include "log.h"
+#include "parse.h"
 
 #define HTMC_FLAG_NO_SPLASH "-ns"
 #define HTMC_FLAG_OUTPUT    "-o"
@@ -107,18 +112,87 @@ cli_exec_t exec_matches[] = {
     cli_run,
 };
 
-int cli_cgi(const char *query_string) {
-  if (!query_string) {
+int cgi_main() {
+  const char *query_string = getenv("QUERY_STRING");
+  const char *path         = getenv("PATH_TRANSLATED");
+  const char *method       = getenv("REQUEST_METHOD");
+  if (NULL == method) {
+    method = "GET";
+  }
+
+  // load request body as well
+  // read the request body from stdin
+  // read environment variables
+
+  if (NULL == query_string || NULL == path) {
     log_fatal("query not specified");
     return EXIT_FAILURE;
   }
 
-  return EXIT_SUCCESS;
+  FILE *src_file = fopen(path, "r");
+
+  if (NULL == src_file) {
+    log_fatal("no such file or directory");
+    return EXIT_FAILURE;
+  }
+
+  const char *tmp_dir = cliOutputFileOrDirectory;
+  if (NULL == tmp_dir) {
+    tmp_dir = "./tmp";
+  }
+
+  char *fn_templ = malloc(strlen(path) + 1);
+
+  for (int i = 0; path[i]; i++) {
+    if ('/' == path[i] || '\\' == path[i]) {
+      fn_templ[i] = '_';
+      continue;
+    }
+
+    fn_templ[i] = path[i];
+  }
+
+  char *c_file_path  = malloc(strlen(tmp_dir) + 1 + strlen(fn_templ) + 3);
+  char *so_file_path = malloc(strlen(tmp_dir) + 1 + strlen(fn_templ) + 4);
+
+  sprintf(c_file_path, "%s/%s.c", tmp_dir, fn_templ);
+  sprintf(so_file_path, "%s/%s.so", tmp_dir, fn_templ);
+
+  FILE *c_file = fopen(c_file_path, "w");
+
+  if (EXIT_SUCCESS != parse_and_emit(src_file, c_file)) {
+    log_fatal("error while parsing source file");
+    return EXIT_FAILURE;
+  }
+
+  fclose(c_file);
+
+  if (EXIT_SUCCESS != compile_c_output(c_file_path, so_file_path)) {
+    log_fatal("error while producing shared object");
+    return EXIT_FAILURE;
+  }
+
+  htmc_handover_t handover = {.variant_id          = HTMC_BASE_HANDOVER,
+                              .request_method      = method,
+                              .query_string        = query_string,
+                              .query_has_params    = true,
+                              .query_param_sep_off = -1,
+                              .content_length      = 0,
+                              .content_type        = "text/plain",
+                              .request_body        = "",
+                              .vprintf             = impl_debug_vprintf,
+                              .query_vscanf        = impl_base_query_vscanf,
+                              .form_vscanf         = impl_base_form_vscanf,
+                              .alloc               = impl_debug_alloc,
+                              .free                = impl_debug_free,
+                              .cleanup             = impl_debug_cleanup};
+
+  return run_htmc_so(so_file_path, &handover);
 }
 
 int main(int argc, char *argv[]) {
   if (2 > argc) {
-    return cli_cgi(getenv("QUERY_STRING"));
+    return cgi_main();
   }
 
   cli_exec_t fcn_cli = NULL;
@@ -187,5 +261,5 @@ int main(int argc, char *argv[]) {
     return fcn_cli(cliInputFile, cliOutputFileOrDirectory);
   }
 
-  return cli_cgi(getenv("QUERY_STRING"));
+  return cgi_main();
 }

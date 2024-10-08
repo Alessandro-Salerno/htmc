@@ -22,17 +22,4 @@
 
 #pragma once
 
-typedef enum {
-  HTMC_LOG_LEVEL_ALL,
-  HTMC_LOG_LEVEL_INFO,
-  HTMC_LOG_LEVEL_WARNING,
-  HTMC_LOG_LEVEL_ERROR,
-  HTMC_LOG_LEVEL_OFF,
-} log_lvl_t;
-
-void log_fatal(const char *message);
-void log_error(const char *message);
-void log_info(const char *message);
-void log_set_level(log_lvl_t lvl);
-void log_set_safe();
-int  log_translate_level(const char *lvl_str);
+int compile_c_output(const char *src_path, const char *dst_path);

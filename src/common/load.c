@@ -25,9 +25,12 @@
 
 #include "libhtmc/libhtmc.h"
 #include "load.h"
+#include "log.h"
 
 void *load_htmc_so(const char *so_file_path) {
+  log_info("loading shared object");
   if (!so_file_path) {
+    log_error("shared object path is NULL");
     return NULL;
   }
 
@@ -35,7 +38,9 @@ void *load_htmc_so(const char *so_file_path) {
 }
 
 htmc_entry_point_t get_htmc_entry_point(void *so_handle) {
+  log_info("reading shared object entry");
   if (!so_handle) {
+    log_error("shared object handle is NULL");
     return NULL;
   }
 
@@ -43,7 +48,9 @@ htmc_entry_point_t get_htmc_entry_point(void *so_handle) {
 }
 
 int call_htmc_entry(htmc_entry_point_t entry_point, htmc_handover_t *handover) {
+  log_info("calling shared object entry");
   if (!entry_point) {
+    log_error("unable to locate shared object entry");
     return EXIT_FAILURE;
   }
 
