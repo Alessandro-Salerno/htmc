@@ -47,9 +47,98 @@ The recommended mode for serving web content is CGI as it allows for easy integr
 CGI is known to be old and slow, hence why htmc will get its own web server at some point. The integrated web server will use preallocated [arenas](https://www.rfleury.com/p/untangling-lifetimes-the-arena-allocator), memory and network optimizations to maximize execution speed and minimize overhead, hopefully.
 
 # How to use htmc easily
-The easiest (and slowest) way to use htmc is
 
-_TO BE CONTINUED_
+
+<details>
+    <summary>Requirements</summary>
+
+<br>
+    
+- Modern GCC Compiler or equivilent
+- Decently recent version of the GNU Linker or equivilent
+- GNU + Linux or other compatible Linux-based systems
+
+**NOTE:** As of now replacing GCC or GNU Linker with other software is not encouraged. Some commandline options specified by htmc may be different in other compilers/linkers.
+
+</details>
+
+<details>
+    <summary>How to use libhtmc</summary>
+
+<br>
+
+libhtmc contains all htmc functions. The library can be used in other native programs to integrate htmc, but also includes an interface to interact with the htmc runtime and manipulate HTML code
+
+| Function interface | Description |
+| - | - |
+| `void  htmc_bind(htmc_handover_t *handover)` | Binds an `htmc_handover_t` pointer to the current htmc execution unit |
+| `int   htmc_printf(const char *fmt, ...)` | Writes a formatted string to the HTML page |
+| `int   htmc_vpprintf(const char *fmt, va_list args)` | Writes a formatted string to the HTML page |
+| `int   htmc_query_scanf(const char *fmt, ...)` | Reads values from HTTP query arguments |
+| `int   htmc_query_vscanf(const char *fmt, va_list args)` | Reads values from HTTP query arguments |
+| `int   htmc_form_scanf(const char *fmt, ...)` | Reads values from HTTP body arguments in POST requests |
+| `int   htmc_form_vscanf(const char *fmt, va_list args)`  | Reads values from HTTP body arguments in POST requests |
+| `int   htmc_error(const char *fmt, ...)` | Throws a formatted error message |
+| `void *htmc_alloc(size_t size)` | Returns a `void *` to a memory buffer of the requested size or `NULL` if it fails |
+| `void  htmc_free(void *ptr)` | Frees a memory buffer allocated with `htmc_alloc` |
+
+</details>
+
+
+## CGI web server
+The easiest (and slowest) way to use htmc is to create a simple CGI web server in a high level language and invoke htmc when handling request. In this example, [Golang]() is used as it's one of the simplest native languages that supports these features out of the box.
+
+1. Write and compile a simple CGI web server in go
+
+```go
+package main
+
+import (
+    "net/http"
+    "net/http/cgi"
+)
+
+func htmcCGI(w http.ResponseWriter, r *http.Request) {
+    handler := cgi.Handler{Path: "./bin/htmc"}
+    handler.ServeHTTP(w, r)
+}
+
+func main() {
+    http.HandleFunc("/", htmcCGI)
+    http.ListenAndServe("localhost:80", nil)
+}
+```
+
+2. Create a directory for the web server and strucutre it as follows (`htmc` is the htmc executable, `gows` is the GO CGI web server executable)
+```
+myhtmcws/
+    bin/
+        htmc
+        gows
+    htdocs/
+        index.htmc
+    launch-ws.sh
+```
+3. Write a script `launch-ws.sh` to launch your web server as follows
+```bash
+#!/bin/sh
+sudo ./bin/gows
+```
+4. Write valid htmc code in `htdocs/index.htmc`
+```html
+<html>
+    <head>
+        <title>My htmc page</title>
+    </head>
+
+    <body>
+        <?c
+            htmc_printf("<p>This was generated with htmc</p>");
+        ?>
+    </body>
+</html>
+```
+5. You should now be able to run the `launch-ws.sh` script and handle requests for htmc web pages
 
 # How to build htmc
 
