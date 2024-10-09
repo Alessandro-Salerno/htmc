@@ -64,7 +64,7 @@ func main() {
     }
   }
 
-  if !exists("./bin/htmc") || !exists("./bin/htmc.exe") || !exists("./bin/libhtmc.a") || !exists("./include/libhtmc/libhtmc.h") {
+  if (!exists("./bin/htmc") && !exists("./bin/htmc.exe")) || !exists("./bin/libhtmc.a") || !exists("./include/libhtmc/libhtmc.h") {
     fmt.Println("You're missing some important htmc files:")
     fmt.Println("\t1. Go to <https://github.com/Alessandro-Salerno/htmc> and download the latest release files")
     fmt.Println("\t2. Place the htmc executable (htmc or htmc.exe) in the bin/ directory")
