@@ -43,7 +43,7 @@ func main() {
   if !exists("./bin") {
     err := os.MkdirAll("./bin", 0755)
     if err != nil {
-      fmt.Print("Unable to create bin/ directory")
+      fmt.Println("Unable to create bin/ directory")
       return
     }
   }
@@ -51,7 +51,7 @@ func main() {
   if !exists("./tmp") {
     err := os.MkdirAll("./tmp", 0755)
     if err != nil {
-      fmt.Print("Unable to create tmp/ directory")
+      fmt.Println("Unable to create tmp/ directory")
       return
     }
   }
@@ -59,9 +59,20 @@ func main() {
   if !exists("./htdocs") {
     err := os.MkdirAll("./htdocs", 0755)
     if err != nil {
-      fmt.Print("Unable to create htdocs/ directory")
+      fmt.Println("Unable to create htdocs/ directory")
       return
     }
+  }
+
+  if !exists("./bin/htmc") || !exists("./bin/htmc.exe") || !exists("./bin/libhtmc.a") || !exists("./include/libhtmc/libhtmc.h") {
+    fmt.Println("You're missing some important htmc files:")
+    fmt.Println("\t1. Go to <https://github.com/Alessandro-Salerno/htmc> and download the latest release files")
+    fmt.Println("\t2. Place the htmc executable (htmc or htmc.exe) in the bin/ directory")
+    fmt.Println("\t3. Place the libhtmc.a file in the bin/ directory")
+    fmt.Println("\t4. Copy the include/ directory in the working directory")
+    fmt.Println("\t5. Make sure that include/libhtmc/libhtmc.h exists and is the libhtmc header file")
+    fmt.Println("\t6. Make sure that GCC and GNU ld are installed")
+    return
   }
 
   http.HandleFunc("/", htmcCGI)
