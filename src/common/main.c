@@ -80,9 +80,9 @@ cli_opt_desc_t matches[] = {
 
     {HTMC_CLI_TRANSLATE, HTMC_CLI_FULL_TRANSLATE, NULL, false, cli_translate},
     {HTMC_CLI_COMPILE, HTMC_CLI_FULL_COMPILE, NULL, false, cli_compile},
-    {HTMC_CLI_BUILD, HTMC_CLI_FULL_BUILD, NULL, false, NULL},
+    // {HTMC_CLI_BUILD, HTMC_CLI_FULL_BUILD, NULL, false, NULL},
     {HTMC_CLI_LOAD_SO, HTMC_CLI_FULL_LOAD_SO, NULL, false, cli_load_shared},
-    {HTMC_CLI_RUN, HTMC_CLI_FULL_RUN, NULL, false, cli_run},
+    // {HTMC_CLI_RUN, HTMC_CLI_FULL_RUN, NULL, false, cli_run},
 
     // Optional flags
     {HTMC_FLAG_NO_SPLASH,
