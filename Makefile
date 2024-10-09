@@ -22,7 +22,7 @@
 
 
 CC=gcc
-CFLAGS=-O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DHTMC_CGI_INTF -DEXT_HTMC_BUILD="\"$(shell date +%y.%m.%d)\""
+CFLAGS=-O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"$(shell date +%y.%m.%d)\""
 BIN=bin
 EXEC=$(BIN)/htmc
 CGI_EXEC=$(BIN)/htmc-cgi-ws
