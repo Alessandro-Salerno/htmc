@@ -258,13 +258,13 @@ int main(int argc, char *argv[]) {
 
   log_set_safe();
 
+  if (!fcn_cli) {
+    return cgi_main();
+  }
+
   if (!cliStopSplashText) {
     print_program_info();
   }
 
-  if (fcn_cli) {
-    return fcn_cli(cliInputFile, cliOutputFileOrDirectory);
-  }
-
-  return cgi_main();
+  return fcn_cli(cliInputFile, cliOutputFileOrDirectory);
 }
