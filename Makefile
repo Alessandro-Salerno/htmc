@@ -63,7 +63,7 @@ $(EXEC): obj $(OBJ)
 $(LIB): obj $(RELOC_OBJ)
 	ar rcs $(LIB) $(RELOC_OBJ)
 
-$(CGI_EXEC): $(EXEC) $(LIB)
+$(CGI_EXEC): obj
 	cd cgi-ws && go build -o ../$(CGI_EXEC)
 
 obj/%.o: src/%.c
