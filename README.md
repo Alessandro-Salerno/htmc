@@ -133,32 +133,36 @@ sudo ./htmc-cgi-ws
     
 ```
 Compiling for linux
-gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DHTMC_CGI_INTF -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/cli.c -o obj/common/cli.o
-gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DHTMC_CGI_INTF -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/compile.c -o obj/common/compile.o
-gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DHTMC_CGI_INTF -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/emit.c -o obj/common/emit.o
-gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DHTMC_CGI_INTF -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/libhtmc/impl/base-impl.c -o obj/common/libhtmc/impl/base-impl.o
-gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DHTMC_CGI_INTF -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/libhtmc/impl/debug-impl.c -o obj/common/libhtmc/impl/debug-impl.o
-gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DHTMC_CGI_INTF -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/libhtmc/libhtmc.c -o obj/common/libhtmc/libhtmc.o
-gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DHTMC_CGI_INTF -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/load.c -o obj/common/load.o
-gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DHTMC_CGI_INTF -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/log.c -o obj/common/log.o
-gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DHTMC_CGI_INTF -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/main.c -o obj/common/main.o
-gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DHTMC_CGI_INTF -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/parse.c -o obj/common/parse.o
-gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DHTMC_CGI_INTF -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/util.c -o obj/common/util.o
-gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DHTMC_CGI_INTF -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/cli.c -o lib/common/cli.o
-gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DHTMC_CGI_INTF -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/compile.c -o lib/common/compile.o
-gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DHTMC_CGI_INTF -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/emit.c -o lib/common/emit.o
-gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DHTMC_CGI_INTF -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/libhtmc/impl/base-impl.c -o lib/common/libhtmc/impl/base-impl.o
-gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DHTMC_CGI_INTF -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/libhtmc/impl/debug-impl.c -o lib/common/libhtmc/impl/debug-impl.o
-gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DHTMC_CGI_INTF -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/libhtmc/libhtmc.c -o lib/common/libhtmc/libhtmc.o
-gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DHTMC_CGI_INTF -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/load.c -o lib/common/load.o
-gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DHTMC_CGI_INTF -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/log.c -o lib/common/log.o
-gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DHTMC_CGI_INTF -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/main.c -o lib/common/main.o
-gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DHTMC_CGI_INTF -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/parse.c -o lib/common/parse.o
-gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DHTMC_CGI_INTF -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/util.c -o lib/common/util.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/cli.c -o obj/common/cli.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/compile.c -o obj/common/compile.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/emit.c -o obj/common/emit.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/libhtmc/impl/base-impl.c -o obj/common/libhtmc/impl/base-impl.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/libhtmc/impl/debug-impl.c -o obj/common/libhtmc/impl/debug-impl.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/libhtmc/libhtmc.c -o obj/common/libhtmc/libhtmc.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/load.c -o obj/common/load.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/log.c -o obj/common/log.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/main.c -o obj/common/main.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/parse.c -o obj/common/parse.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/util.c -o obj/common/util.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/cli.c -o lib/common/cli.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/compile.c -o lib/common/compile.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/emit.c -o lib/common/emit.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/libhtmc/impl/base-impl.c -o lib/common/libhtmc/impl/base-impl.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/libhtmc/impl/debug-impl.c -o lib/common/libhtmc/impl/debug-impl.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/libhtmc/libhtmc.c -o lib/common/libhtmc/libhtmc.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/load.c -o lib/common/load.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/log.c -o lib/common/log.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/main.c -o lib/common/main.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/parse.c -o lib/common/parse.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/util.c -o lib/common/util.o
 gcc -flto obj/common/cli.o obj/common/compile.o obj/common/emit.o obj/common/libhtmc/impl/base-impl.o obj/common/libhtmc/impl/debug-impl.o obj/common/libhtmc/libhtmc.o obj/common/load.o obj/common/log.o obj/common/main.o obj/common/parse.o obj/common/util.o -o bin/htmc
 ar rcs bin/libhtmc.a lib/common/cli.o lib/common/compile.o lib/common/emit.o lib/common/libhtmc/impl/base-impl.o lib/common/libhtmc/impl/debug-impl.o lib/common/libhtmc/libhtmc.o lib/common/load.o lib/common/log.o lib/common/main.o lib/common/parse.o lib/common/util.o
 cd cgi-ws && go build -o ../bin/htmc-cgi-ws
 Finished!
+alessandrosalerno@MacBook-Pro-di-Alessandro-3 htmc %
+
+
+
 ```
 
 </details>
