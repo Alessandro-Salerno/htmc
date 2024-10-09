@@ -96,7 +96,7 @@ The easiest (and slowest) way to use htmc is to create a simple CGI web server i
 sudo ./htmc-cgi-ws
 ```
 4. Launch `htmc-cgi-ws` with the script or by hand and follow the instructions
-5. Write valid htmc code in `htdocs/index.htmc`
+5. Write valid htmc code in `./index.htmc` (`htdocs/` directory will be used in future versions)
 ```html
 <html>
     <head>
