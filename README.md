@@ -86,45 +86,17 @@ libhtmc contains all htmc functions. The library can be used in other native pro
 
 
 ## CGI web server
-The easiest (and slowest) way to use htmc is to create a simple CGI web server in a high level language and invoke htmc when handling request. In this example, [Golang](https://go.dev/) is used as it's one of the simplest native languages that supports these features out of the box.
+The easiest (and slowest) way to use htmc is to create a simple CGI web server in a high level language and invoke htmc when handling request. In this example, [Golang](https://go.dev/) is used as it's one of the simplest native languages that supports these features out of the box. A Golang web server is included in this repository.
 
-1. Write and compile a simple CGI web server in Go
-
-```go
-package main
-
-import (
-    "net/http"
-    "net/http/cgi"
-)
-
-func htmcCGI(w http.ResponseWriter, r *http.Request) {
-    handler := cgi.Handler{Path: "./bin/htmc"}
-    handler.ServeHTTP(w, r)
-}
-
-func main() {
-    http.HandleFunc("/", htmcCGI)
-    http.ListenAndServe("localhost:80", nil)
-}
-```
-
-2. Create a directory for the web server and strucutre it as follows (`htmc` is the htmc executable, `gows` is the GO CGI web server executable)
-```
-myhtmcws/
-    bin/
-        htmc
-        gows
-    htdocs/
-        index.htmc
-    launch-ws.sh
-```
-3. Write a script `launch-ws.sh` to launch your web server as follows
+1. Download the `htmc-cgi-ws` from the [releases](/releases/)
+2. Create a directory for the web server and place the `htmc-cgi-ws` executable inside of it
+3. Write a script `launch-ws.sh` to launch `htmc-cgi-ws` as follows
 ```bash
 #!/bin/sh
-sudo ./bin/gows
+sudo ./htmc-cgi-ws
 ```
-4. Write valid htmc code in `htdocs/index.htmc`
+4. Launch `htmc-cgi-ws` with the script or by hand and follow the instructions
+5. Write valid htmc code in `htdocs/index.htmc`
 ```html
 <html>
     <head>
