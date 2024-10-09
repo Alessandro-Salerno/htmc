@@ -4,16 +4,18 @@
   </head>
 
   <body>
-    <?c
-      int param = 0;
-      int ret = htmc_query_scanf("param=%d", &param);
-      htmc_printf("%d %d", ret, param);
-    ?>
+    <h1>htmc test page</h1>
+    <p>Following are the first n positive integers</p>
 
-    <labeL> Test spazio </label>
-
+    <p>
     <?c
-      int x, y;
+      int max_num = 100;
+      int scanf_read = htmc_query_scanf("max=%d", &max_num);
+
+      for (int i = 0; i < max_num; i++) {
+        htmc_printf("%d ", i);
+      }
     ?>
+    </p>
   </body>
 </html>

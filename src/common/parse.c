@@ -42,7 +42,7 @@
 
 #define IS_STR_DELIM(c)       C_STR_CHAR == c
 #define IS_ESCAPE(c)          C_ESCAPE_CHAR == c
-#define IS_SCOPE(c)           C_RSCOPE_CHAR == c
+#define IS_SCOPE(c)           C_LSCOPE_CHAR == c
 #define IS_EOS(c)             C_RSCOPE_CHAR == c
 #define IS_DELIM(c)           C_DELIM == c
 #define IS_EOL(c)             COMMON_EOL_CHAR == c
