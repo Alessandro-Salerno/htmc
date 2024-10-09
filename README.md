@@ -187,8 +187,16 @@ make libhtmc      # Build ONLY the library
 make htmc-cgi-ws  # Build ONLY the CGI Web Server
 ```
 
+# Screenshot
+
+<img src=".github/screenshots/screenshot1.png">
+
 # Contributing
-This is an Open Source project. Everybody is welcome to contribute to this repository, rules and guidelines are outlined in [CONTRIBUTING](CONTRIBUTING.md). Take note of the other files too (TO BE CONTINUED).
+This is an Open Source project. Everybody is welcome to contribute to this repository, rules and guidelines are outlined in [CONTRIBUTING](CONTRIBUTING). Take note of the other files too (TO BE CONTINUED).
 
 # License
 htmc is distributed under the terms of the MIT license. See [LICENSE](LICENSE) for more information.
+
+# Credits
+This project is initially inspired by [PKD667/cweb](https://github.com/PKD667/cweb).
+
