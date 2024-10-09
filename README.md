@@ -191,9 +191,6 @@ make htmc-cgi-ws  # Build ONLY the CGI Web Server
 
 <img src=".github/screenshots/screenshot1.png">
 
-# Contributing
-This is an Open Source project. Everybody is welcome to contribute to this repository, rules and guidelines are outlined in [CONTRIBUTING](CONTRIBUTING). Take note of the other files too (TO BE CONTINUED).
-
 # License
 htmc is distributed under the terms of the MIT license. See [LICENSE](LICENSE) for more information.
 
