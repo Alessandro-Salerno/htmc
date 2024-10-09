@@ -86,45 +86,17 @@ libhtmc contains all htmc functions. The library can be used in other native pro
 
 
 ## CGI web server
-The easiest (and slowest) way to use htmc is to create a simple CGI web server in a high level language and invoke htmc when handling request. In this example, [Golang](https://go.dev/) is used as it's one of the simplest native languages that supports these features out of the box.
+The easiest (and slowest) way to use htmc is to create a simple CGI web server in a high level language and invoke htmc when handling request. In this example, [Golang](https://go.dev/) is used as it's one of the simplest native languages that supports these features out of the box. A Golang web server is included in this repository.
 
-1. Write and compile a simple CGI web server in Go
-
-```go
-package main
-
-import (
-    "net/http"
-    "net/http/cgi"
-)
-
-func htmcCGI(w http.ResponseWriter, r *http.Request) {
-    handler := cgi.Handler{Path: "./bin/htmc"}
-    handler.ServeHTTP(w, r)
-}
-
-func main() {
-    http.HandleFunc("/", htmcCGI)
-    http.ListenAndServe("localhost:80", nil)
-}
-```
-
-2. Create a directory for the web server and strucutre it as follows (`htmc` is the htmc executable, `gows` is the GO CGI web server executable)
-```
-myhtmcws/
-    bin/
-        htmc
-        gows
-    htdocs/
-        index.htmc
-    launch-ws.sh
-```
-3. Write a script `launch-ws.sh` to launch your web server as follows
+1. Download the `htmc-cgi-ws` from the [releases](https://github.com/Alessandro-Salerno/htmc/releases)
+2. Create a directory for the web server and place the `htmc-cgi-ws` executable inside of it
+3. Write a script `launch-ws.sh` to launch `htmc-cgi-ws` as follows
 ```bash
 #!/bin/sh
-sudo ./bin/gows
+sudo ./htmc-cgi-ws
 ```
-4. Write valid htmc code in `htdocs/index.htmc`
+4. Launch `htmc-cgi-ws` with the script or by hand and follow the instructions
+5. Write valid htmc code in `htdocs/index.htmc`
 ```html
 <html>
     <head>
@@ -142,7 +114,81 @@ sudo ./bin/gows
 
 # How to build htmc
 
-_TO BE CONTINUED_
+<details>
+    <summary>Requirements</summary>
+
+<br>
+    
+- C compiler compatible with C23 (C2x)
+- Linker that supports LTO
+- Make
+- Go
+
+</details>
+
+<details>
+    <summary>Expected behaviour</summary>
+
+<br>
+    
+```
+Compiling for linux
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/cli.c -o obj/common/cli.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/compile.c -o obj/common/compile.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/emit.c -o obj/common/emit.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/libhtmc/impl/base-impl.c -o obj/common/libhtmc/impl/base-impl.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/libhtmc/impl/debug-impl.c -o obj/common/libhtmc/impl/debug-impl.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/libhtmc/libhtmc.c -o obj/common/libhtmc/libhtmc.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/load.c -o obj/common/load.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/log.c -o obj/common/log.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/main.c -o obj/common/main.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/parse.c -o obj/common/parse.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -flto -c src/common/util.c -o obj/common/util.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/cli.c -o lib/common/cli.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/compile.c -o lib/common/compile.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/emit.c -o lib/common/emit.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/libhtmc/impl/base-impl.c -o lib/common/libhtmc/impl/base-impl.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/libhtmc/impl/debug-impl.c -o lib/common/libhtmc/impl/debug-impl.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/libhtmc/libhtmc.c -o lib/common/libhtmc/libhtmc.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/load.c -o lib/common/load.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/log.c -o lib/common/log.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/main.c -o lib/common/main.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/parse.c -o lib/common/parse.o
+gcc -O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DEXT_HTMC_BUILD="\"24.10.09\"" -fPIC -g -w -c src/common/util.c -o lib/common/util.o
+gcc -flto obj/common/cli.o obj/common/compile.o obj/common/emit.o obj/common/libhtmc/impl/base-impl.o obj/common/libhtmc/impl/debug-impl.o obj/common/libhtmc/libhtmc.o obj/common/load.o obj/common/log.o obj/common/main.o obj/common/parse.o obj/common/util.o -o bin/htmc
+ar rcs bin/libhtmc.a lib/common/cli.o lib/common/compile.o lib/common/emit.o lib/common/libhtmc/impl/base-impl.o lib/common/libhtmc/impl/debug-impl.o lib/common/libhtmc/libhtmc.o lib/common/load.o lib/common/log.o lib/common/main.o lib/common/parse.o lib/common/util.o
+cd cgi-ws && go build -o ../bin/htmc-cgi-ws
+Finished!
+alessandrosalerno@MacBook-Pro-di-Alessandro-3 htmc %
+
+
+
+```
+
+</details>
+
+1. Clone this repository
+```
+git clone https://github.com/Alessandro-Salerno/htmc
+```
+2. Enter the repository's directory
+```
+cd htmc/
+```
+3. Use the make command to build htmc
+```
+make
+```
+
+**NOTE:** The default make target is `all`. Alternative make targets are:
+```bash
+make htmc         # Build ONLY the executable
+make libhtmc      # Build ONLY the library
+make htmc-cgi-ws  # Build ONLY the CGI Web Server
+```
+
+# Contributing
+This is an Open Source project. Everybody is welcome to contribute to this repository, rules and guidelines are outlined in [CONTRIBUTING](CONTRIBUTING.md). Take note of the other files too (TO BE CONTINUED).
 
 # License
 htmc is distributed under the terms of the MIT license. See [LICENSE](LICENSE) for more information.
