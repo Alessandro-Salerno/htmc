@@ -114,7 +114,7 @@ cli_exec_t exec_matches[] = {
 
 int cgi_main() {
   const char *query_string = getenv("QUERY_STRING");
-  const char *path         = getenv("PATH_TRANSLATED");
+  const char *path         = getenv("PATH_INFO");
   const char *method       = getenv("REQUEST_METHOD");
   if (NULL == method) {
     method = "GET";
@@ -127,6 +127,10 @@ int cgi_main() {
   if (NULL == query_string || NULL == path) {
     log_fatal("query not specified");
     return EXIT_FAILURE;
+  }
+
+  if ('/' == path[0]) {
+    path++;
   }
 
   FILE *src_file = fopen(path, "r");
@@ -187,6 +191,7 @@ int cgi_main() {
                               .free                = impl_debug_free,
                               .cleanup             = impl_debug_cleanup};
 
+  printf("Content-type: text/html\n\n");
   return run_htmc_so(so_file_path, &handover);
 }
 

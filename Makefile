@@ -25,6 +25,7 @@ CC=gcc
 CFLAGS=-O2 -std=c2x -Wno-unused-parameter -Iinclude/ -DHTMC_CGI_INTF -DEXT_HTMC_BUILD="\"$(shell date +%y.%m.%d)\""
 BIN=bin
 EXEC=$(BIN)/htmc
+CGI_EXEC=$(BIN)/htmc-cgi-ws
 LIB=$(BIN)/libhtmc.a
 HTMC_OS=$(shell uname -s | tr A-Z a-z)
 
@@ -39,7 +40,7 @@ OBJ=$(patsubst src/%.c,obj/%.o, $(SRC))
 RELOC_OBJ=$(patsubst src/%.c,lib/%.o, $(SRC))
 
 .PHONEY: all
-all: info obj $(OBJ) $(RELOC_OBJ) $(EXEC) $(LIB)
+all: info obj $(OBJ) $(RELOC_OBJ) $(EXEC) $(LIB) $(CGI_EXEC)
 	@echo Finished!
 
 .PHONEY: htmc
@@ -47,6 +48,9 @@ htmc: $(EXEC)
 
 .PHONEY: libhtmc
 libhtmc: $(LIB)
+
+.PHONEY: cgi-ws
+cgi-ws: $(CGI_EXEC)
 
 info:
 	@echo Compiling for $(HTMC_OS)
@@ -56,6 +60,9 @@ $(EXEC): obj $(OBJ)
 
 $(LIB): obj $(RELOC_OBJ)
 	ar rcs $(LIB) $(RELOC_OBJ)
+
+$(CGI_EXEC): $(EXEC) $(LIB)
+	cd cgi-ws && go build -o ../$(CGI_EXEC)
 
 obj/%.o: src/%.c
 	@mkdir -p $(@D)
