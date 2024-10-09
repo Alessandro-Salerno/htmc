@@ -88,7 +88,7 @@ libhtmc contains all htmc functions. The library can be used in other native pro
 ## CGI web server
 The easiest (and slowest) way to use htmc is to create a simple CGI web server in a high level language and invoke htmc when handling request. In this example, [Golang](https://go.dev/) is used as it's one of the simplest native languages that supports these features out of the box. A Golang web server is included in this repository.
 
-1. Download the `htmc-cgi-ws` from the [releases](/releases/)
+1. Download the `htmc-cgi-ws` from the [releases](https://github.com/Alessandro-Salerno/htmc/releases)
 2. Create a directory for the web server and place the `htmc-cgi-ws` executable inside of it
 3. Write a script `launch-ws.sh` to launch `htmc-cgi-ws` as follows
 ```bash
