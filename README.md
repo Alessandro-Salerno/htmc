@@ -195,5 +195,5 @@ make htmc-cgi-ws  # Build ONLY the CGI Web Server
 htmc is distributed under the terms of the MIT license. See [LICENSE](LICENSE) for more information.
 
 # Credits
-This project is initially inspired by [PKD667/cweb](https://github.com/PKD667/cweb).
+This project was initially inspired by [PKD667/cweb](https://github.com/PKD667/cweb).
 
