@@ -24,14 +24,20 @@
 
 #include <stdbool.h>
 
-typedef int (*cli_fcn_t)(void *target, const char *next);
-typedef int (*cli_exec_t)(const char *input_file, const char *output_file);
+typedef struct {
+  const char *input_file;
+  const char *output_path;
+  bool        stop_splash;
+  bool        log_level_set;
+} cli_info_t;
+
+typedef int (*cli_fcn_t)(cli_info_t *info, const char *next);
+typedef int (*cli_exec_t)(cli_info_t info);
 
 typedef struct {
   const char *short_option;
   const char *full_option;
   cli_fcn_t   handler;
-  void       *target_variable;
   bool        has_argument;
   cli_exec_t  exec_handler;
 } cli_opt_desc_t;
@@ -41,16 +47,19 @@ void print_program_version();
 void print_program_info();
 
 // Handler functions (cli_fcn_t)
-int flag_no_splash(void *target, const char *next);
-int flag_output(void *target, const char *next);
-int flag_log_level(void *target, const char *next);
+int flag_no_splash(cli_info_t *info, const char *next);
+int flag_output(cli_info_t *info, const char *next);
+int flag_log_level(cli_info_t *info, const char *next);
+
+// Setup for executable functions
+int setup_cli_version(cli_info_t *info, const char *next);
 
 // Executable functions (cli_exec_t)
-int cli_help(const char *input_file, const char *output_file);
-int cli_license(const char *input_file, const char *output_file);
-int cli_version(const char *input_file, const char *output_file);
-int cli_translate(const char *input_file, const char *output_file);
-int cli_compile(const char *input_file, const char *output_file);
-int cli_run(const char *input_file, const char *output_file);
-int cli_load_shared(const char *input_file, const char *output_file);
-int cli_run(const char *input_file, const char *output_file);
+int cli_help(cli_info_t info);
+int cli_license(cli_info_t info);
+int cli_version(cli_info_t info);
+int cli_translate(cli_info_t info);
+int cli_compile(cli_info_t info);
+int cli_run(cli_info_t info);
+int cli_load_shared(cli_info_t info);
+int cli_run(cli_info_t info);

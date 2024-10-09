@@ -65,54 +65,34 @@
 
 // CLI Flags and options
 // These are global so they're easier to access
-const char *cliInputFile             = NULL;
-const char *cliOutputFileOrDirectory = NULL;
-bool        cliStopSplashText        = false;
-bool        logLevelSet              = false;
+cli_info_t cliInfo;
 
 cli_opt_desc_t matches[] = {
     // Mutually exclusive options
-    {HTMC_CLI_HELP, HTMC_CLI_FULL_HELP, NULL, NULL, false, cli_help},
-    {HTMC_CLI_LICENSE, HTMC_CLI_FULL_LICENSE, NULL, NULL, false, cli_license},
-    {HTMC_CLI_VERSION, HTMC_CLI_FULL_VERSION, NULL, NULL, false, cli_version},
+    {HTMC_CLI_HELP, HTMC_CLI_FULL_HELP, NULL, false, cli_help},
+    {HTMC_CLI_LICENSE, HTMC_CLI_FULL_LICENSE, NULL, false, cli_license},
 
-    {HTMC_CLI_TRANSLATE,
-     HTMC_CLI_FULL_TRANSLATE,
-     NULL,
-     NULL,
+    {HTMC_CLI_VERSION,
+     HTMC_CLI_FULL_VERSION,
+     setup_cli_version,
      false,
-     cli_translate},
+     cli_version},
 
-    {HTMC_CLI_COMPILE, HTMC_CLI_FULL_COMPILE, NULL, NULL, false, cli_compile},
-    {HTMC_CLI_BUILD, HTMC_CLI_FULL_BUILD, NULL, NULL, false, NULL},
-
-    {HTMC_CLI_LOAD_SO,
-     HTMC_CLI_FULL_LOAD_SO,
-     NULL,
-     NULL,
-     false,
-     cli_load_shared},
-
-    {HTMC_CLI_RUN, HTMC_CLI_FULL_RUN, NULL, NULL, false, cli_run},
+    {HTMC_CLI_TRANSLATE, HTMC_CLI_FULL_TRANSLATE, NULL, false, cli_translate},
+    {HTMC_CLI_COMPILE, HTMC_CLI_FULL_COMPILE, NULL, false, cli_compile},
+    {HTMC_CLI_BUILD, HTMC_CLI_FULL_BUILD, NULL, false, NULL},
+    {HTMC_CLI_LOAD_SO, HTMC_CLI_FULL_LOAD_SO, NULL, false, cli_load_shared},
+    {HTMC_CLI_RUN, HTMC_CLI_FULL_RUN, NULL, false, cli_run},
 
     // Optional flags
     {HTMC_FLAG_NO_SPLASH,
      HTMC_FLAG_FULL_NO_SPLASH,
      flag_no_splash,
-     &cliStopSplashText,
-     false},
+     false,
+     NULL},
 
-    {HTMC_FLAG_OUTPUT,
-     HTMC_FLAG_FULL_OUTPUT,
-     flag_output,
-     &cliOutputFileOrDirectory,
-     true},
-
-    {HTMC_FLAG_LOG_LVL,
-     HTMC_FLAG_FULL_LOG_LVL,
-     flag_log_level,
-     &logLevelSet,
-     true},
+    {HTMC_FLAG_OUTPUT, HTMC_FLAG_FULL_OUTPUT, flag_output, true, NULL},
+    {HTMC_FLAG_LOG_LVL, HTMC_FLAG_FULL_LOG_LVL, flag_log_level, true, NULL},
 };
 
 int cgi_main() {
@@ -143,7 +123,7 @@ int cgi_main() {
     return EXIT_FAILURE;
   }
 
-  const char *tmp_dir = cliOutputFileOrDirectory;
+  const char *tmp_dir = cliInfo.output_path;
   if (NULL == tmp_dir) {
     tmp_dir = "./tmp";
   }
@@ -236,26 +216,27 @@ int main(int argc, char *argv[]) {
         }
 
         fcn_cli = opt_desc.exec_handler;
-        break;
       }
 
       // If the handler isfor a non-mutually exclusive option
-      int fcn_ecode = opt_desc.handler(opt_desc.target_variable, next);
+      if (NULL != opt_desc.handler) {
+        int fcn_ecode = opt_desc.handler(&cliInfo, next);
 
-      if (EXIT_SUCCESS != fcn_ecode) {
-        return fcn_ecode;
+        if (EXIT_SUCCESS != fcn_ecode) {
+          return fcn_ecode;
+        }
       }
     }
 
     // If no mathcing option was found
     // This argument is treated as the input file
     if (!found_matching_option) {
-      if (NULL != cliInputFile) {
+      if (NULL != cliInfo.input_file) {
         log_fatal("too many input files");
         return EXIT_FAILURE;
       }
 
-      cliInputFile = argument;
+      cliInfo.input_file = argument;
     }
   }
 
@@ -265,9 +246,9 @@ int main(int argc, char *argv[]) {
     return cgi_main();
   }
 
-  if (!cliStopSplashText) {
+  if (!cliInfo.stop_splash) {
     print_program_info();
   }
 
-  return fcn_cli(cliInputFile, cliOutputFileOrDirectory);
+  return fcn_cli(cliInfo);
 }

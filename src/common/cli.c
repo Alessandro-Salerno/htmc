@@ -142,15 +142,13 @@ void print_program_info() {
 // Handler functions
 // These are for optional flags
 
-int flag_no_splash(void *target, const char *next) {
-  *(bool *)target = true;
+int flag_no_splash(cli_info_t *info, const char *next) {
+  info->stop_splash = true;
   return EXIT_SUCCESS;
 }
 
-int flag_output(void *target, const char *next) {
-  const char **char_target = target;
-
-  if (NULL != *char_target) {
+int flag_output(cli_info_t *info, const char *next) {
+  if (NULL != info->output_path) {
     log_fatal("multiple output flags are not supported");
     return EXIT_FAILURE;
   }
@@ -161,14 +159,12 @@ int flag_output(void *target, const char *next) {
     return EXIT_FAILURE;
   }
 
-  *char_target = next;
+  info->output_path = next;
   return EXIT_SUCCESS;
 }
 
-int flag_log_level(void *target, const char *next) {
-  bool *bool_target = target;
-
-  if (*bool_target) {
+int flag_log_level(cli_info_t *info, const char *next) {
+  if (info->log_level_set) {
     log_fatal("multiple log level flags are not supported");
     return EXIT_FAILURE;
   }
@@ -184,8 +180,16 @@ int flag_log_level(void *target, const char *next) {
     return EXIT_FAILURE;
   }
 
-  *bool_target = true;
+  info->log_level_set = true;
   log_set_level(log_level);
+  return EXIT_SUCCESS;
+}
+
+// Section
+//
+
+int setup_cli_version(cli_info_t *info, const char *next) {
+  info->stop_splash = true;
   return EXIT_SUCCESS;
 }
 
@@ -193,29 +197,29 @@ int flag_log_level(void *target, const char *next) {
 // Executable functions
 // These are for mutually exclusive options
 
-int cli_help(const char *input_file, const char *output_file) {
+int cli_help(cli_info_t info) {
   printf("%s", HTMC_DISPLAY_HELP);
   return EXIT_SUCCESS;
 }
 
-int cli_license(const char *input_file, const char *output_file) {
+int cli_license(cli_info_t info) {
   printf("%s", HTMC_DISPLAY_LICENSE);
   return EXIT_SUCCESS;
 }
 
-int cli_version(const char *input_file, const char *output_file) {
+int cli_version(cli_info_t info) {
   print_program_version();
   return EXIT_SUCCESS;
 }
 
-int cli_translate(const char *input_file, const char *output_file) {
-  if (!input_file) {
+int cli_translate(cli_info_t info) {
+  if (NULL == info.input_file) {
     log_fatal("input file required but not provided");
     return EXIT_FAILURE;
   }
 
-  const char *src_file_path = input_file;
-  const char *dst_file_path = output_file;
+  const char *src_file_path = info.input_file;
+  const char *dst_file_path = info.output_path;
 
   FILE *src_file = fopen(src_file_path, "r");
   if (!src_file) {
@@ -239,22 +243,22 @@ int cli_translate(const char *input_file, const char *output_file) {
   return r;
 }
 
-int cli_compile(const char *input_file, const char *output_file) {
-  if (NULL == input_file) {
+int cli_compile(cli_info_t info) {
+  if (NULL == info.input_file) {
     log_fatal("input file required but not provided");
     return EXIT_FAILURE;
   }
 
-  return compile_c_output(input_file, output_file);
+  return compile_c_output(info.input_file, info.output_path);
 }
 
-int cli_load_shared(const char *input_file, const char *output_file) {
-  if (!input_file) {
+int cli_load_shared(cli_info_t info) {
+  if (NULL == info.input_file) {
     log_fatal("input file required but not provided");
     return EXIT_FAILURE;
   }
 
-  const char *so_file_path = input_file;
+  const char *so_file_path = info.input_file;
 
   const char *query_string     = getenv("QUERY_STRING");
   const char *method           = getenv("REQUEST_METHOD");
@@ -287,7 +291,7 @@ int cli_load_shared(const char *input_file, const char *output_file) {
   return run_htmc_so(so_file_path, &handover);
 }
 
-int cli_run(const char *input_file, const char *output_file) {
+int cli_run(cli_info_t info) {
   log_fatal("operation not supported yet");
   return EXIT_FAILURE;
 }

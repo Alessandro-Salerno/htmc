@@ -31,6 +31,8 @@ HTMC_OS=$(shell uname -s | tr A-Z a-z)
 
 ifeq ($(OS),Windows_NT)
 	HTMC_OS=windows
+	EXEC+=.exe
+	CGI_EXEC+=.exe
 endif
 
 rwildcard=$(foreach d,$(wildcard $(1:=/*)),$(call rwildcard ,$d, $2) $(filter $(subst *, %, $2),$d))
