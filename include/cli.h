@@ -33,6 +33,7 @@ typedef struct {
   cli_fcn_t   handler;
   void       *target_variable;
   bool        has_argument;
+  cli_exec_t  exec_handler;
 } cli_opt_desc_t;
 
 // Support functions
@@ -49,6 +50,7 @@ int cli_help(const char *input_file, const char *output_file);
 int cli_license(const char *input_file, const char *output_file);
 int cli_version(const char *input_file, const char *output_file);
 int cli_translate(const char *input_file, const char *output_file);
+int cli_compile(const char *input_file, const char *output_file);
 int cli_run(const char *input_file, const char *output_file);
 int cli_load_shared(const char *input_file, const char *output_file);
 int cli_run(const char *input_file, const char *output_file);

@@ -25,6 +25,7 @@
 #include <stdlib.h>
 
 #include "cli.h"
+#include "compile.h"
 #include "libhtmc/libhtmc-internals.h"
 #include "libhtmc/libhtmc.h"
 #include "load.h"
@@ -236,6 +237,15 @@ int cli_translate(const char *input_file, const char *output_file) {
 
   log_fatal("unable to complete correctly");
   return r;
+}
+
+int cli_compile(const char *input_file, const char *output_file) {
+  if (NULL == input_file) {
+    log_fatal("input file required but not provided");
+    return EXIT_FAILURE;
+  }
+
+  return compile_c_output(input_file, output_file);
 }
 
 int cli_load_shared(const char *input_file, const char *output_file) {

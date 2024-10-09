@@ -72,14 +72,28 @@ bool        logLevelSet              = false;
 
 cli_opt_desc_t matches[] = {
     // Mutually exclusive options
-    {HTMC_CLI_HELP, HTMC_CLI_FULL_HELP, NULL, NULL, false},
-    {HTMC_CLI_LICENSE, HTMC_CLI_FULL_LICENSE, NULL, NULL, false},
-    {HTMC_CLI_VERSION, HTMC_CLI_FULL_VERSION, NULL, NULL, false},
-    {HTMC_CLI_TRANSLATE, HTMC_CLI_FULL_TRANSLATE, NULL, NULL, false},
-    {HTMC_CLI_COMPILE, HTMC_CLI_FULL_COMPILE, NULL, NULL, false},
-    {HTMC_CLI_BUILD, HTMC_CLI_FULL_BUILD, NULL, NULL, false},
-    {HTMC_CLI_LOAD_SO, HTMC_CLI_FULL_LOAD_SO, NULL, NULL, false},
-    {HTMC_CLI_RUN, HTMC_CLI_FULL_RUN, NULL, NULL, false},
+    {HTMC_CLI_HELP, HTMC_CLI_FULL_HELP, NULL, NULL, false, cli_help},
+    {HTMC_CLI_LICENSE, HTMC_CLI_FULL_LICENSE, NULL, NULL, false, cli_license},
+    {HTMC_CLI_VERSION, HTMC_CLI_FULL_VERSION, NULL, NULL, false, cli_version},
+
+    {HTMC_CLI_TRANSLATE,
+     HTMC_CLI_FULL_TRANSLATE,
+     NULL,
+     NULL,
+     false,
+     cli_translate},
+
+    {HTMC_CLI_COMPILE, HTMC_CLI_FULL_COMPILE, NULL, NULL, false, cli_compile},
+    {HTMC_CLI_BUILD, HTMC_CLI_FULL_BUILD, NULL, NULL, false, NULL},
+
+    {HTMC_CLI_LOAD_SO,
+     HTMC_CLI_FULL_LOAD_SO,
+     NULL,
+     NULL,
+     false,
+     cli_load_shared},
+
+    {HTMC_CLI_RUN, HTMC_CLI_FULL_RUN, NULL, NULL, false, cli_run},
 
     // Optional flags
     {HTMC_FLAG_NO_SPLASH,
@@ -99,17 +113,6 @@ cli_opt_desc_t matches[] = {
      flag_log_level,
      &logLevelSet,
      true},
-};
-
-cli_exec_t exec_matches[] = {
-    cli_help,
-    cli_license,
-    cli_version,
-    cli_translate,
-    NULL, // cli_compile
-    NULL, // cli_build
-    cli_load_shared,
-    cli_run,
 };
 
 int cgi_main() {
@@ -226,13 +229,13 @@ int main(int argc, char *argv[]) {
       }
 
       // If the handler is for mutually exclusive option
-      if (NULL == opt_desc.handler && NULL == opt_desc.target_variable) {
+      if (NULL != opt_desc.exec_handler) {
         if (NULL != fcn_cli) {
           log_fatal("more than one mutually exclusive option specified");
           return EXIT_FAILURE;
         }
 
-        fcn_cli = exec_matches[j];
+        fcn_cli = opt_desc.exec_handler;
         break;
       }
 
