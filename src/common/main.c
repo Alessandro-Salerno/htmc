@@ -28,6 +28,7 @@
 
 #include "cli.h"
 #include "compile.h"
+#include "fscache.h"
 #include "libhtmc/libhtmc-internals.h"
 #include "libhtmc/libhtmc.h"
 #include "load.h"
@@ -116,13 +117,6 @@ int cgi_main() {
     path++;
   }
 
-  FILE *src_file = fopen(path, "r");
-
-  if (NULL == src_file) {
-    log_fatal("no such file or directory");
-    return EXIT_FAILURE;
-  }
-
   const char *tmp_dir = cliInfo.output_path;
   if (NULL == tmp_dir) {
     tmp_dir = "./tmp";
@@ -145,16 +139,26 @@ int cgi_main() {
   sprintf(c_file_path, "%s/%s.c", tmp_dir, fn_templ);
   sprintf(so_file_path, "%s/%s.so", tmp_dir, fn_templ);
 
-  FILE *c_file = fopen(c_file_path, "w");
+  if (0 >= fscache_cmp_pp(path, c_file_path)) {
+    FILE *src_file = fopen(path, "r");
 
-  if (EXIT_SUCCESS != parse_and_emit(src_file, c_file)) {
-    log_fatal("error while parsing source file");
-    return EXIT_FAILURE;
+    if (NULL == src_file) {
+      log_fatal("no such file or directory");
+      return EXIT_FAILURE;
+    }
+
+    FILE *c_file = fopen(c_file_path, "w");
+
+    if (EXIT_SUCCESS != parse_and_emit(src_file, c_file)) {
+      log_fatal("error while parsing source file");
+      return EXIT_FAILURE;
+    }
+
+    fclose(c_file);
   }
 
-  fclose(c_file);
-
-  if (EXIT_SUCCESS != compile_c_output(c_file_path, so_file_path)) {
+  if (0 >= fscache_cmp_pp(c_file_path, so_file_path) &&
+      EXIT_SUCCESS != compile_c_output(c_file_path, so_file_path)) {
     log_fatal("error while producing shared object");
     return EXIT_FAILURE;
   }
