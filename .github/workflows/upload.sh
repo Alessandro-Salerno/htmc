@@ -7,7 +7,7 @@ git rm -rf .github
 git rm -rf cgi-ws
 git rm -rf src
 git rm -rf .gitattributes
-git rm -rf  gitignore
+git rm -rf .gitignore
 git rm -rf .clang-format
 git rm -rf Makefile
 git add bin/*
