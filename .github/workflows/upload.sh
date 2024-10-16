@@ -11,4 +11,4 @@ git add bin/*
 git add include/*
 git add examples/*
 git commit -m "new bundle"
-git push
+git push --set-upstream origin latest-linux-bundle
