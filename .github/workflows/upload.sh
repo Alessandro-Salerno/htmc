@@ -15,4 +15,4 @@ git add include/*
 git add examples/*
 git add README.md
 git commit -m "new bundle"
-git push --set-upstream origin latest-linux-bundle
+git push --set-upstream origin latest-linux-bundle --force
