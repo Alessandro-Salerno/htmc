@@ -24,3 +24,5 @@ jobs:
         path: |
           bin
           include
+    - name: Download all workflow artifacts
+      uses: actions/download-artifact@v4
