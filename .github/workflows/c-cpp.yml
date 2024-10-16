@@ -20,9 +20,9 @@ jobs:
     - name: Archive binaries and header 
       uses: actions/upload-artifact@v4
       with:
-        name: latest-linux-binaries
+        name: latest-linux-bundle
         path: |
           bin
           include
-    - name: Download all workflow artifacts
-      uses: actions/download-artifact@v4
+    - name: Upload all files
+      run: sh ./.github/workflows/upload.sh
