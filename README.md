@@ -87,31 +87,21 @@ libhtmc contains all htmc functions. The library can be used in other native pro
 
 
 ## CGI web server
-The easiest (and slowest) way to use htmc is to create a simple CGI web server in a high level language and invoke htmc when handling request. In this example, [Golang](https://go.dev/) is used as it's one of the simplest native languages that supports these features out of the box. A Golang web server is included in this repository.
+The easiest way to use htmc is to create a simple CGI web server in a high level language and invoke htmc when handling requests. In this example, [Golang](https://go.dev/) is used as it's one of the simplest native languages that supports these features out of the box. A Golang web server is included in this repository.
 
-1. Download the `htmc-cgi-ws` from the [releases](https://github.com/Alessandro-Salerno/htmc/releases)
-2. Create a directory for the web server and place the `htmc-cgi-ws` executable inside of it
-3. Write a script `launch-ws.sh` to launch `htmc-cgi-ws` as follows
-```bash
-#!/bin/sh
-sudo ./htmc-cgi-ws
+1. Downlaod the latest `htmc-cgi-ws` for Linux from [here](https://alessandro-salerno.github.io/htmc/bin/htmc-cgi-ws)
+2. Create a directory for the server and move `htmc-cgi-ws` into it
+3. Run `htmc-cgi-ws` as super user (if needed) and follow the instructions on screen
 ```
-4. Launch `htmc-cgi-ws` with the script or by hand and follow the instructions
-5. Write valid htmc code in `./index.htmc` (`htdocs/` directory will be used in future versions)
-```html
-<html>
-    <head>
-        <title>My htmc page</title>
-    </head>
-
-    <body>
-        <?c
-            htmc_printf("<p>This was generated with htmc</p>");
-        ?>
-    </body>
-</html>
+[alevm@alevm ws]$ sudo ./htmc-cgi-ws 
+You're missing some important htmc files, proceed with the download? [Y/n]: Y
+Downloading <https://alessandro-salerno.github.io/htmc/bin/htmc> to ./bin/htmc ... Done!
+Downloading <https://alessandro-salerno.github.io/htmc/bin/libhtmc.a> to ./bin/libhtmc.a ... Done!
+Downloading <https://alessandro-salerno.github.io/htmc/include/libhtmc/libhtmc.h> to ./include/libhtmc/libhtmc.h ... Done!
+Downloading <https://alessandro-salerno.github.io/htmc/examples/index.htmc> to ./index.htmc ... Done!
+Listening on localhost:80
 ```
-5. You should now be able to run the `launch-ws.sh` script and handle requests for htmc web pages
+4. An example page should now be available at `localhost/index.htmc`
 
 # How to build htmc
 
