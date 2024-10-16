@@ -29,26 +29,8 @@
 int impl_base_query_vscanf(htmc_handover_t *handover,
                            const char      *fmt,
                            va_list          args) {
-  if (0 == handover->query_param_sep_off) {
-    handover->query_has_params = false;
-    for (const char *cp = handover->query_string; *cp; cp++) {
-      if ('?' == *cp) {
-        handover->query_has_params = true;
-        break;
-      }
-
-      handover->query_param_sep_off++;
-    }
-  }
-
-  if (!handover->query_has_params) {
-    return -1;
-  }
-
   int fmt_off = 0;
-  for (const char *cp = handover->query_string + handover->query_param_sep_off;
-       *cp && fmt[fmt_off];
-       cp++) {
+  for (const char *cp = handover->query_string; *cp && fmt[fmt_off]; cp++) {
     const char query_char = *cp;
     const char fmt_char   = fmt[fmt_off];
 

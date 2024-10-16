@@ -61,6 +61,7 @@ typedef struct {
   uint64_t lineno;
   uint64_t chr_index;
   uint64_t scope_sum;
+  bool     html_init;
 } parse_status_t;
 
 inline void reset_parse_status(parse_status_t *parse_status) {
@@ -71,10 +72,15 @@ inline void reset_parse_status(parse_status_t *parse_status) {
 bool find_tag_and_emit(FILE           *src_file,
                        FILE           *dst_file,
                        parse_status_t *parse_status) {
+  if (!parse_status->html_init) {
+    emit_html_base(dst_file);
+    parse_status->html_init = true;
+  }
+
   bool found;
   char c;
 
-  emit_html_base(dst_file);
+  emit_html_block(dst_file);
   while ((found = !feof(src_file)) && '<' != (c = fgetc(src_file))) {
     emit_char_escaped(dst_file, c);
     if (IS_EOL(c)) {
@@ -82,7 +88,7 @@ bool find_tag_and_emit(FILE           *src_file,
     }
   }
 
-  emit_html_end(dst_file);
+  emit_html_block_end(dst_file);
   return found;
 }
 
@@ -204,17 +210,25 @@ int parse_and_emit(FILE *src_file, FILE *dst_file) {
   while (find_tag_and_emit(src_file, dst_file, &parse_status)) {
     char buf[2] = {0, 0};
     if (!is_tag_fit(src_file, &buf[0]) || !is_tag_htmc(src_file, &buf[1])) {
-      emit_html_base(dst_file);
+      emit_html_block(dst_file);
       emit_char_escaped(dst_file, '<');
       emit_char_escaped(dst_file, buf[0]);
       emit_char_escaped(dst_file, buf[1]);
-      emit_html_end(dst_file);
+      emit_html_block_end(dst_file);
       continue;
     }
+
+    emit_html_end(dst_file);
 
     if (!collect_emit_c(src_file, dst_file, &parse_status)) {
       return -1;
     }
+
+    parse_status.html_init = false;
+  }
+
+  if (parse_status.html_init) {
+    emit_html_end(dst_file);
   }
 
   emit_end(dst_file);

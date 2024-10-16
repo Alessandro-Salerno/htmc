@@ -26,7 +26,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "libhtmc/libhtmc-internals.h"
 #include "libhtmc/libhtmc.h"
 
 static htmc_handover_t *targetHandover;
@@ -45,6 +44,10 @@ int htmc_printf(const char *fmt, ...) {
 
 int htmc_vprintf(const char *fmt, va_list args) {
   return targetHandover->vprintf(targetHandover, fmt, args);
+}
+
+int htmc_puts(const char *s) {
+  return targetHandover->puts(targetHandover, s);
 }
 
 int htmc_query_scanf(const char *fmt, ...) {
@@ -77,10 +80,6 @@ void *htmc_alloc(size_t nbytes) {
 
 void htmc_free(void *ptr) {
   targetHandover->free(targetHandover, ptr);
-}
-
-void htmc_cleanup() {
-  targetHandover->cleanup(targetHandover);
 }
 
 void htmc_error(const char *fmt, ...) {

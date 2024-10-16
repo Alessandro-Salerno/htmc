@@ -38,6 +38,10 @@ int impl_debug_vprintf(htmc_handover_t *handover,
   return vprintf(fmt, args);
 }
 
+int impl_debug_puts(htmc_handover_t *handover, const char *s) {
+  return fputs(s, stdout);
+}
+
 void *impl_debug_alloc(htmc_handover_t *handover, size_t nbytes) {
   if (debugStackOffset >= sizeof debugStack) {
     return NULL;
@@ -50,8 +54,4 @@ void *impl_debug_alloc(htmc_handover_t *handover, size_t nbytes) {
 }
 
 void impl_debug_free(htmc_handover_t *handover, void *ptr) {
-}
-
-void impl_debug_cleanup(htmc_handover_t *handover) {
-  debugStackOffset = debugStackLastOffset;
 }

@@ -273,20 +273,18 @@ int cli_load_shared(cli_info_t info) {
   SET_IF_NULL(content_type, content_type, "text/plain");
   SET_IF_NULL(request_body, request_body, "");
 
-  htmc_handover_t handover = {.variant_id          = HTMC_BASE_HANDOVER,
-                              .request_method      = method,
-                              .query_string        = query_string,
-                              .query_has_params    = false,
-                              .query_param_sep_off = 0,
-                              .content_length      = content_length,
-                              .content_type        = content_type,
-                              .request_body        = request_body,
-                              .vprintf             = impl_debug_vprintf,
-                              .query_vscanf        = impl_base_query_vscanf,
-                              .form_vscanf         = impl_base_form_vscanf,
-                              .alloc               = impl_debug_alloc,
-                              .free                = impl_debug_free,
-                              .cleanup             = impl_debug_cleanup};
+  htmc_handover_t handover = {.variant_id     = HTMC_BASE_HANDOVER,
+                              .request_method = method,
+                              .query_string   = query_string,
+                              .content_length = content_length,
+                              .content_type   = content_type,
+                              .request_body   = request_body,
+                              .vprintf        = impl_debug_vprintf,
+                              .puts           = impl_debug_puts,
+                              .query_vscanf   = impl_base_query_vscanf,
+                              .form_vscanf    = impl_base_form_vscanf,
+                              .alloc          = impl_debug_alloc,
+                              .free           = impl_debug_free};
 
   return run_htmc_so(so_file_path, &handover);
 }

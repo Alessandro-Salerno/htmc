@@ -31,28 +31,37 @@
 
 #define HTMC_C_BASE_END "}"
 
-#define HTMC_HTML_BASE "htmc_printf(\""
-
-#define HTMC_HTML_BASE_END "\");\n"
+#define HTMC_HTML_BASE      "htmc_puts("
+#define HTMC_HTML_BLOCK     "\""
+#define HTMC_HTML_BLOCK_END "\""
+#define HTMC_HTML_BASE_END  ");\n"
 
 void emit_str(FILE *dst_file, const char *str) {
-  fprintf(dst_file, "%s", str);
+  fputs(str, dst_file);
 }
 
 void emit_base(FILE *dst_file) {
-  fprintf(dst_file, HTMC_C_BASE);
+  fputs(HTMC_C_BASE, dst_file);
 }
 
 void emit_end(FILE *dst_file) {
-  fprintf(dst_file, "%s", HTMC_C_BASE_END);
+  fputs(HTMC_C_BASE_END, dst_file);
 }
 
 void emit_html_base(FILE *dst_file) {
-  fprintf(dst_file, "%s", HTMC_HTML_BASE);
+  fputs(HTMC_HTML_BASE, dst_file);
 }
 
 void emit_html_end(FILE *dst_file) {
-  fprintf(dst_file, "%s", HTMC_HTML_BASE_END);
+  fputs(HTMC_HTML_BASE_END, dst_file);
+}
+
+void emit_html_block(FILE *dst_file) {
+  fputs(HTMC_HTML_BLOCK, dst_file);
+}
+
+void emit_html_block_end(FILE *dst_file) {
+  fputs(HTMC_HTML_BLOCK_END, dst_file);
 }
 
 void emit_char(FILE *dst_file, char chr) {

@@ -29,5 +29,7 @@ void emit_base(FILE *dst_file);
 void emit_end(FILE *dst_file);
 void emit_html_base(FILE *dst_file);
 void emit_html_end(FILE *dst_file);
+void emit_html_block(FILE *dst_file);
+void emit_html_block_end(FILE *dst_file);
 void emit_char(FILE *dst_file, char chr);
 void emit_char_escaped(FILE *dst_file, char chr);

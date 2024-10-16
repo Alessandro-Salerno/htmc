@@ -163,20 +163,18 @@ int cgi_main() {
     return EXIT_FAILURE;
   }
 
-  htmc_handover_t handover = {.variant_id          = HTMC_BASE_HANDOVER,
-                              .request_method      = method,
-                              .query_string        = query_string,
-                              .query_has_params    = true,
-                              .query_param_sep_off = -1,
-                              .content_length      = 0,
-                              .content_type        = "text/plain",
-                              .request_body        = "",
-                              .vprintf             = impl_debug_vprintf,
-                              .query_vscanf        = impl_base_query_vscanf,
-                              .form_vscanf         = impl_base_form_vscanf,
-                              .alloc               = impl_debug_alloc,
-                              .free                = impl_debug_free,
-                              .cleanup             = impl_debug_cleanup};
+  htmc_handover_t handover = {.variant_id     = HTMC_BASE_HANDOVER,
+                              .request_method = method,
+                              .query_string   = query_string,
+                              .content_length = 0,
+                              .content_type   = "text/plain",
+                              .request_body   = "",
+                              .vprintf        = impl_debug_vprintf,
+                              .puts           = impl_debug_puts,
+                              .query_vscanf   = impl_base_query_vscanf,
+                              .form_vscanf    = impl_base_form_vscanf,
+                              .alloc          = impl_debug_alloc,
+                              .free           = impl_debug_free};
 
   printf("Content-type: text/html\n\n");
   return run_htmc_so(so_file_path, &handover);

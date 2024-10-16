@@ -32,31 +32,29 @@ typedef enum htmc_handover_variant {
 typedef struct htmc_handover htmc_handover_t;
 typedef struct htmc_handover {
   const htmc_handover_variant_t variant_id;
-  const char                   *request_method;
-  const char                   *query_string;
-  bool                          query_has_params;
-  int                           query_param_sep_off;
-  size_t                        content_length;
-  const char                   *content_type;
-  const char                   *request_body;
-
   int (*vprintf)(htmc_handover_t *handover, const char *fmt, va_list args);
+  int (*puts)(htmc_handover_t *handover, const char *s);
   int (*query_vscanf)(htmc_handover_t *handover, const char *fmt, va_list args);
   int (*form_vscanf)(htmc_handover_t *handover, const char *fmt, va_list args);
   void *(*alloc)(htmc_handover_t *handover, size_t nbytes);
   void (*free)(htmc_handover_t *handover, void *ptr);
-  void (*cleanup)(htmc_handover_t *handover);
+
+  const char *request_method;
+  const char *query_string;
+  size_t      content_length;
+  const char *content_type;
+  const char *request_body;
 } htmc_handover_t;
 
 void  htmc_bind(htmc_handover_t *handover);
 int   htmc_printf(const char *fmt, ...);
 int   htmc_vprintf(const char *fmt, va_list args);
+int   htmc_puts(const char *s);
 int   htmc_query_scanf(const char *fmt, ...);
 int   htmc_query_vscanf(const char *fmt, va_list args);
 int   htmc_form_scanf(const char *fmt, ...);
 int   htmc_form_vscafn(const char *fmt, va_list args);
 void *htmc_alloc(size_t nbytes);
 void  htmc_free(void *ptr);
-void  htmc_cleanup();
 void  htmc_error(const char *fmt, ...);
 void  htmc_verror(const char *fmt, va_list args);
