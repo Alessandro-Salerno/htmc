@@ -74,6 +74,7 @@ libhtmc contains all htmc functions. The library can be used in other native pro
 | `void  htmc_bind(htmc_handover_t *handover)` | Binds an `htmc_handover_t` pointer to the current htmc execution unit |
 | `int   htmc_printf(const char *fmt, ...)` | Writes a formatted string to the HTML page |
 | `int   htmc_vpprintf(const char *fmt, va_list args)` | Writes a formatted string to the HTML page |
+| `int   htmc_puts(const cahr *s)` | Write a plain-text string to the HTML page (faster than `htmc_printf`) |
 | `int   htmc_query_scanf(const char *fmt, ...)` | Reads values from HTTP query arguments |
 | `int   htmc_query_vscanf(const char *fmt, va_list args)` | Reads values from HTTP query arguments |
 | `int   htmc_form_scanf(const char *fmt, ...)` | Reads values from HTTP body arguments in POST requests |
