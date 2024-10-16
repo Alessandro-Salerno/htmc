@@ -103,7 +103,7 @@ func main() {
   }
 
   if (!exists("./bin/htmc") && !exists("./bin/htmc.exe")) || !exists("./bin/libhtmc.a") || !exists("./include/libhtmc/libhtmc.h") {
-    fmt.Print("You're missing some important htmc files, proceed with the downlaod? [Y/n]: ")
+    fmt.Print("You're missing some important htmc files, proceed with the download? [Y/n]: ")
     reader := bufio.NewReader(os.Stdin)
     text, _ := reader.ReadString('\n')
     text = strings.Replace(text, "\n", "", -1)
