@@ -34,6 +34,15 @@ import (
 )
 
 func download(filepath string, url string) {
+  if (exists(filepath)) {
+    fmt.Print("Ignoring downlaod of <")
+    fmt.Print(url)
+    fmt.Print("> because ")
+    fmt.Print(filepath)
+    fmt.Println(" already exists")
+    return
+  }
+
   fmt.Print("Downloading <")
   fmt.Print(url)
   fmt.Print("> to ")
