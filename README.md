@@ -91,7 +91,11 @@ The easiest way to use htmc is to create a simple CGI web server in a high level
 
 1. Downlaod the latest `htmc-cgi-ws` for Linux from [here](https://alessandro-salerno.github.io/htmc/bin/htmc-cgi-ws)
 2. Create a directory for the server and move `htmc-cgi-ws` into it
-3. Run `htmc-cgi-ws` as super user (if needed) and follow the instructions on screen
+3. Make sure that `htmc-cgi-ws` is recognized as an executable
+```
+chmod +x ./htmc-cgi-ws
+```
+4. Run `htmc-cgi-ws` as super user (if needed) and follow the instructions on screen
 ```
 [alevm@alevm ws]$ sudo ./htmc-cgi-ws 
 You're missing some important htmc files, proceed with the download? [Y/n]: Y
@@ -101,7 +105,7 @@ Downloading <https://alessandro-salerno.github.io/htmc/include/libhtmc/libhtmc.h
 Downloading <https://alessandro-salerno.github.io/htmc/examples/index.htmc> to ./index.htmc ... Done!
 Listening on localhost:80
 ```
-4. An example page should now be available at `localhost/index.htmc`
+5. An example page should now be available at `localhost/index.htmc`
 
 # How to build htmc
 
