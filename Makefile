@@ -58,13 +58,13 @@ info:
 	@echo Compiling for $(HTMC_OS)
 
 $(EXEC): obj $(OBJ)
-	$(CC) -flto $(OBJ) -o $(EXEC)
+	$(CC) -flto -static -static-libgcc $(OBJ) -o $(EXEC)
 
 $(LIB): obj $(RELOC_OBJ)
 	ar rcs $(LIB) $(RELOC_OBJ)
 
 $(CGI_EXEC): obj
-	cd cgi-ws && go build -o ../$(CGI_EXEC)
+	cd cgi-ws && CGO_ENABLED=0 go build -o ../$(CGI_EXEC)
 
 obj/%.o: src/%.c
 	@mkdir -p $(@D)
