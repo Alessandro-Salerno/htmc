@@ -23,7 +23,6 @@
 #pragma once
 
 #include <stdio.h>
-#include <time.h>
 
 // These functions compare the "last modified" value of two files
 // Return values:
@@ -33,6 +32,6 @@
 // The idea behind using zero as error is that, in any case,
 // if the two files were changed at the same time, when checking
 // for caching, it is safer to rebuild the file
-time_t fscache_cmp_ff(FILE *f1, FILE *f2);
-time_t fscache_cmp_pp(const char *p1, const char *p2);
-time_t fscache_cmp_fp(FILE *f1, const char *f2);
+double fscache_cmp_ff(FILE *f1, FILE *f2);
+double fscache_cmp_pp(const char *p1, const char *p2);
+double fscache_cmp_fp(FILE *f1, const char *f2);

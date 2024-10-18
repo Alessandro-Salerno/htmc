@@ -139,7 +139,7 @@ int cgi_main() {
   sprintf(c_file_path, "%s/%s.c", tmp_dir, fn_templ);
   sprintf(so_file_path, "%s/%s.so", tmp_dir, fn_templ);
 
-  if (0 >= fscache_cmp_pp(path, c_file_path)) {
+  if (0 <= fscache_cmp_pp(path, c_file_path)) {
     FILE *src_file = fopen(path, "r");
 
     if (NULL == src_file) {
@@ -157,7 +157,7 @@ int cgi_main() {
     fclose(c_file);
   }
 
-  if (0 >= fscache_cmp_pp(c_file_path, so_file_path) &&
+  if (0 <= fscache_cmp_pp(c_file_path, so_file_path) &&
       EXIT_SUCCESS != compile_c_output(c_file_path, so_file_path)) {
     log_fatal("error while producing shared object");
     return EXIT_FAILURE;

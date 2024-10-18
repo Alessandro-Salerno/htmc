@@ -20,15 +20,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#ifndef _POSIX_SOURCE
 #define _POSIX_SOURCE
+#endif
 
 #include <stdio.h>
 #include <sys/stat.h>
+#include <time.h>
 #include <unistd.h>
 
 #include "fscache.h"
 
-time_t fscache_cmp_ff(FILE *f1, FILE *f2) {
+double fscache_cmp_ff(FILE *f1, FILE *f2) {
   struct stat f1_stat;
   struct stat f2_stat;
 
@@ -39,10 +42,10 @@ time_t fscache_cmp_ff(FILE *f1, FILE *f2) {
     return 0;
   }
 
-  return f1_stat.st_mtime - f2_stat.st_mtime;
+  return difftime(f1_stat.st_mtime, f2_stat.st_mtime);
 }
 
-time_t fscache_cmp_pp(const char *p1, const char *p2) {
+double fscache_cmp_pp(const char *p1, const char *p2) {
   struct stat f1_stat;
   struct stat f2_stat;
 
@@ -53,10 +56,10 @@ time_t fscache_cmp_pp(const char *p1, const char *p2) {
     return 0;
   }
 
-  return f1_stat.st_mtime - f2_stat.st_mtime;
+  return difftime(f1_stat.st_mtime, f2_stat.st_mtime);
 }
 
-time_t fscache_cmp_fp(FILE *f1, const char *f2) {
+double fscache_cmp_fp(FILE *f1, const char *f2) {
   struct stat f1_stat;
   struct stat f2_stat;
 
@@ -67,5 +70,5 @@ time_t fscache_cmp_fp(FILE *f1, const char *f2) {
     return 0;
   }
 
-  return f1_stat.st_mtime - f2_stat.st_mtime;
+  return difftime(f1_stat.st_mtime, f2_stat.st_mtime);
 }

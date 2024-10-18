@@ -27,14 +27,14 @@
 
 #include "fscache.h"
 
-time_t fscache_cmp_ff(FILE *f1, FILE *f2) {
+double fscache_cmp_ff(FILE *f1, FILE *f2) {
   return 0; // temporary
 }
 
-time_t fscache_cmp_pp(const char *p1, const char *p2) {
+double fscache_cmp_pp(const char *p1, const char *p2) {
   return 0; // temporary
 }
 
-time_t fscache_cmp_fp(FILE *f1, const char *f2) {
+double fscache_cmp_fp(FILE *f1, const char *f2) {
   return 0; // temporary
 }
