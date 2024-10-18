@@ -28,7 +28,7 @@
 
 #include "fscache.h"
 
-size_t fscache_cmp_ff(FILE *f1, FILE *f2) {
+time_t fscache_cmp_ff(FILE *f1, FILE *f2) {
   struct stat f1_stat;
   struct stat f2_stat;
 
@@ -42,7 +42,7 @@ size_t fscache_cmp_ff(FILE *f1, FILE *f2) {
   return f1_stat.st_mtime - f2_stat.st_mtime;
 }
 
-size_t fscache_cmp_pp(const char *p1, const char *p2) {
+time_t fscache_cmp_pp(const char *p1, const char *p2) {
   struct stat f1_stat;
   struct stat f2_stat;
 
@@ -56,7 +56,7 @@ size_t fscache_cmp_pp(const char *p1, const char *p2) {
   return f1_stat.st_mtime - f2_stat.st_mtime;
 }
 
-size_t fscache_cmp_fp(FILE *f1, const char *f2) {
+time_t fscache_cmp_fp(FILE *f1, const char *f2) {
   struct stat f1_stat;
   struct stat f2_stat;
 
