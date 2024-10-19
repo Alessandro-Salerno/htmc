@@ -33,8 +33,47 @@ import (
   "io"
 )
 
-func download(filepath string, url string) {
-  if (exists(filepath)) {
+func checkUpdates() bool {
+  fmt.Println("Checking for updates...")
+
+  output_bytes, err := exec.Command("./bin/htmc", "--version").Output();
+  if err != nil {
+    fmt.Println("Error while checking for updates");
+    return false;
+  }
+
+  cur_v := string(output_bytes)
+
+  resp, err := http.Get("https://raw.githubusercontent.com/Alessandro-Salerno/htmc/refs/heads/latest-linux-bundle/.htmc-version")
+  if err != nil {
+    fmt.Println("Error while requesting new version string")
+    return false
+  }
+  defer resp.Body.Close()
+
+  if resp.StatusCode != http.StatusOK {
+    fmt.Println("Error while requesting new version string")
+    return false
+  }
+
+  body_bytes, err := io.ReadAll(resp.Body)
+  if err != nil {
+    fmt.Println("Error while reading server response")
+    return false
+  }
+
+  new_v := string(body_bytes)
+  
+  fmt.Print("Installed: ")
+  fmt.Print(cur_v)
+  fmt.Print("Latest: ")
+  fmt.Print(new_v)
+
+  return !(cur_v == new_v)
+}
+
+func download(force bool, filepath string, url string) {
+  if (exists(filepath) && !force) {
     fmt.Print("Ignoring downlaod of <")
     fmt.Print(url)
     fmt.Print("> because ")
@@ -127,10 +166,10 @@ func main() {
       return
     }
 
-    download("./bin/htmc", "https://alessandro-salerno.github.io/htmc/bin/htmc")
-    download("./bin/libhtmc.a", "https://alessandro-salerno.github.io/htmc/bin/libhtmc.a")
-    download("./include/libhtmc/libhtmc.h", "https://alessandro-salerno.github.io/htmc/include/libhtmc/libhtmc.h")
-    download("./index.htmc", "https://alessandro-salerno.github.io/htmc/examples/index.htmc")
+    download(false, "./bin/htmc", "https://alessandro-salerno.github.io/htmc/bin/htmc")
+    download(false, "./bin/libhtmc.a", "https://alessandro-salerno.github.io/htmc/bin/libhtmc.a")
+    download(false, "./include/libhtmc/libhtmc.h", "https://alessandro-salerno.github.io/htmc/include/libhtmc/libhtmc.h")
+    download(false, "./index.htmc", "https://alessandro-salerno.github.io/htmc/examples/index.htmc")
     
     // Temporary hard code
     if exec.Command("chmod", "+x", "./bin/htmc").Run() != nil {
@@ -138,6 +177,34 @@ func main() {
       return
     }
   }
+
+  if (checkUpdates()) {
+    fmt.Println()
+    fmt.Println("Files to be updated:")
+    fmt.Println("\t./bin/htmc")
+    fmt.Println("\t./bin/libhtmc.a")
+    fmt.Println("\t./include/libhtmc/libhtmc.h")
+    fmt.Println()
+    fmt.Print(":: Proceed with the installation? [Y/n]: ")
+    reader := bufio.NewReader(os.Stdin)
+    text, _ := reader.ReadString('\n')
+    text = strings.Replace(text, "\n", "", -1)
+    
+    if (len(text) == 0 || text == "Y") {
+      download(true, "./bin/htmc", "https://alessandro-salerno.github.io/htmc/bin/htmc")
+      download(true, "./bin/libhtmc.a", "https://alessandro-salerno.github.io/htmc/bin/libhtmc.a")
+      download(true, "./include/libhtmc/libhtmc.h", "https://alessandro-salerno.github.io/htmc/include/libhtmc/libhtmc.h")
+
+      // Temporary hard code
+      if exec.Command("chmod", "+x", "./bin/htmc").Run() != nil {
+        fmt.Println("Error while setting permissions for ./bin/htmc")
+        return
+      }
+    }
+  }
+
+  fmt.Println()
+  fmt.Println("All up to date")
 
   fmt.Println("Listening on localhost:80")
   fmt.Println()
