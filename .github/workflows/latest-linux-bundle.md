@@ -9,3 +9,4 @@ These artifacts are for Linux only and include:
 | `libhtmc.a` | `bin/libhtmc.a` | Static library archive | htmc in library format |
 | `htmc-cgi-ws` | `bin/htmc-cgi-ws` | ELF executable | CGI Web Server for htmc |
 | `libhtmc.h` | `include/libhtmc/libhtmc.h` | C header | header for libhtmc |
+| `.htmc-version` | `.htmc-version` | Plain text file | htmc version file containing the output of `./bin/htmc --version` |
