@@ -1,0 +1,4 @@
+-Iinclude/
+-std=c2x
+-DHTMC_CGI_INTF
+-DEXT_HTMC_BUILD="\"PLACEHOLDER\""
