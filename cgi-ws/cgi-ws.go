@@ -27,93 +27,9 @@ import (
   "net/http"
   "net/http/cgi"
   "os"
-  "os/exec"
   "bufio"
   "strings"
-  "io"
 )
-
-func checkUpdates() bool {
-  fmt.Println("Checking for updates...")
-
-  output_bytes, err := exec.Command("./bin/htmc", "--version").Output();
-  if err != nil {
-    fmt.Println("Error while checking for updates");
-    return false;
-  }
-
-  cur_v := string(output_bytes)
-
-  resp, err := http.Get("https://raw.githubusercontent.com/Alessandro-Salerno/htmc/refs/heads/latest-linux-bundle/.htmc-version")
-  if err != nil {
-    fmt.Println("Error while requesting new version string")
-    return false
-  }
-  defer resp.Body.Close()
-
-  if resp.StatusCode != http.StatusOK {
-    fmt.Println("Error while requesting new version string")
-    return false
-  }
-
-  body_bytes, err := io.ReadAll(resp.Body)
-  if err != nil {
-    fmt.Println("Error while reading server response")
-    return false
-  }
-
-  new_v := string(body_bytes)
-  
-  fmt.Print("Installed: ")
-  fmt.Print(cur_v)
-  fmt.Print("Latest: ")
-  fmt.Print(new_v)
-
-  return !(cur_v == new_v)
-}
-
-func download(force bool, filepath string, url string) {
-  if (exists(filepath) && !force) {
-    fmt.Print("Ignoring downlaod of <")
-    fmt.Print(url)
-    fmt.Print("> because ")
-    fmt.Print(filepath)
-    fmt.Println(" already exists")
-    return
-  }
-
-  fmt.Print("Downloading <")
-  fmt.Print(url)
-  fmt.Print("> to ")
-  fmt.Print(filepath)
-  fmt.Print(" ... ")
-
-  out, err := os.Create(filepath)
-  if err != nil  {
-    fmt.Println("IO Error")
-    return
-  }
-  defer out.Close()
-
-  resp, err := http.Get(url)
-  if err != nil {
-    fmt.Println("Request Error")
-    return
-  }
-  defer resp.Body.Close()
-
-  if resp.StatusCode != http.StatusOK {
-    fmt.Println("Request Status Error")
-    return
-  }
-
-  _, err = io.Copy(out, resp.Body)
-  if err != nil  {
-    fmt.Println("IO Error")
-    return
-  }
-  fmt.Println("Done!")
-}
 
 func htmcCGI(w http.ResponseWriter, r *http.Request) {
   handler := cgi.Handler{Path: "./bin/htmc", Dir: "./", Args: []string{"-ll", "off", "-ns"}}
@@ -126,31 +42,11 @@ func exists(path string) (bool) {
 }
 
 func main() {
-  if !exists("./bin") {
-    err := os.MkdirAll("./bin", 0755)
-    if err != nil {
-      fmt.Println("Unable to create bin/ directory")
-      return
-    }
+  if !createDirectory(BIN_DIRECTORY_PATH) || !createDirectory(INCLUDE_DIRECTORY_PATH) || !createDirectory(TMP_DIRECTORY_PATH) {
+    return
   }
 
-  if !exists("./tmp") {
-    err := os.MkdirAll("./tmp", 0755)
-    if err != nil {
-      fmt.Println("Unable to create tmp/ directory")
-      return
-    }
-  }
-
-  if !exists("./include/libhtmc") {
-    err := os.MkdirAll("./include/libhtmc", 0755)
-    if err != nil {
-      fmt.Println("Unable to create include/libhtmc/ directory")
-      return
-    }
-  }
-
-  if (!exists("./bin/htmc") && !exists("./bin/htmc.exe")) || !exists("./bin/libhtmc.a") || !exists("./include/libhtmc/libhtmc.h") {
+  if !exists(getHtmcExecPath()) || !exists(LIBHTMC_HEADER_PATH) || !exists(INDEX_HT_FILE) {
     fmt.Print("You're missing some important htmc files, proceed with the download? [Y/n]: ")
     reader := bufio.NewReader(os.Stdin)
     text, _ := reader.ReadString('\n')
@@ -166,24 +62,27 @@ func main() {
       return
     }
 
-    download(false, "./bin/htmc", "https://alessandro-salerno.github.io/htmc/bin/htmc")
-    download(false, "./bin/libhtmc.a", "https://alessandro-salerno.github.io/htmc/bin/libhtmc.a")
-    download(false, "./include/libhtmc/libhtmc.h", "https://alessandro-salerno.github.io/htmc/include/libhtmc/libhtmc.h")
-    download(false, "./index.htmc", "https://alessandro-salerno.github.io/htmc/examples/index.htmc")
+    download(false, getHtmcExecPath(), "https://alessandro-salerno.github.io/htmc/bin/htmc")
+    download(false, LIBHTMC_BINARY_PATH, "https://alessandro-salerno.github.io/htmc/bin/libhtmc.a")
+    download(false, LIBHTMC_HEADER_PATH, "https://alessandro-salerno.github.io/htmc/include/libhtmc/libhtmc.h")
+    download(false, INDEX_HT_FILE, "https://alessandro-salerno.github.io/htmc/examples/index.htmc")
     
-    // Temporary hard code
-    if exec.Command("chmod", "+x", "./bin/htmc").Run() != nil {
-      fmt.Println("Error while setting permissions for ./bin/htmc")
+    if !markFileAsExecutable(getHtmcExecPath()) {
       return
     }
   }
 
+  // This is used as a state check for terminal output
+  up_to_date := true
+
   if (checkUpdates()) {
+    up_to_date = false
+
     fmt.Println()
     fmt.Println("Files to be updated:")
-    fmt.Println("\t./bin/htmc")
-    fmt.Println("\t./bin/libhtmc.a")
-    fmt.Println("\t./include/libhtmc/libhtmc.h")
+    fmt.Println("\t", getHtmcExecPath())
+    fmt.Println("\t", LIBHTMC_BINARY_PATH)
+    fmt.Println("\t", LIBHTMC_HEADER_PATH)
     fmt.Println()
     fmt.Print(":: Proceed with the installation? [Y/n]: ")
     reader := bufio.NewReader(os.Stdin)
@@ -191,21 +90,24 @@ func main() {
     text = strings.Replace(text, "\n", "", -1)
     
     if (len(text) == 0 || text == "Y") {
-      download(true, "./bin/htmc", "https://alessandro-salerno.github.io/htmc/bin/htmc")
-      download(true, "./bin/libhtmc.a", "https://alessandro-salerno.github.io/htmc/bin/libhtmc.a")
-      download(true, "./include/libhtmc/libhtmc.h", "https://alessandro-salerno.github.io/htmc/include/libhtmc/libhtmc.h")
+      download(true, getHtmcExecPath(), "https://alessandro-salerno.github.io/htmc/bin/htmc")
+      download(true, LIBHTMC_BINARY_PATH, "https://alessandro-salerno.github.io/htmc/bin/libhtmc.a")
+      download(true, LIBHTMC_HEADER_PATH, "https://alessandro-salerno.github.io/htmc/include/libhtmc/libhtmc.h")
 
-      // Temporary hard code
-      if exec.Command("chmod", "+x", "./bin/htmc").Run() != nil {
-        fmt.Println("Error while setting permissions for ./bin/htmc")
+      if !markFileAsExecutable(getHtmcExecPath()) {
         return
       }
+
+      up_to_date = true
     }
   }
 
-  fmt.Println()
-  fmt.Println("All up to date")
+  if up_to_date {
+    fmt.Println()
+    fmt.Println("All up to date")
+  }
 
+  fmt.Println()
   fmt.Println("Listening on localhost:80")
   fmt.Println()
 
