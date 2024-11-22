@@ -1,0 +1,21 @@
+<html>
+  <head>
+    <title>htmc test page</title>
+  </head>
+
+  <body>
+    <h1>htmc test page</h1>
+    <p>Following are the first n positive integers</p>
+
+    <p>
+    <?c
+      int max_num = 100;
+      int scanf_read = htmc_query_scanf("max=%d", &max_num);
+
+      for (int i = 0; i < max_num; i++) {
+        htmc_printf("%d ", i);
+      }
+    ?>
+    </p>
+  </body>
+</html>
