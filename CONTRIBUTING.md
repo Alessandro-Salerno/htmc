@@ -2,9 +2,7 @@
 This is an Open Source project, everybody is welcome to contribute with their knowledge and feedback. Before doing so, please read and make use of **ALL** documnetation on the matter (i.e., this file, the Code of Conduct, the Issue Template and the Pull Request Template).
 
 ## Repository management
-It's recommended not to commit your changes directly to the main branch. Instead, create a branch with a descriptive name (such as `<my_name>-<my_change>` e.g, `a_salerno-new_parser`) and commit your changes there. Once your
-
-Oode you changes have been made **AND TESTED**, you can create a Pull Request to merge your code with the official main branch. When writing your Pull Request, please make use of the Pull Request Template.
+It's recommended not to commit your changes directly to the main branch. Instead, create a branch with a descriptive name (such as `<my_name>-<my_change>` e.g, `a_salerno-new_parser`) and commit your changes there. Once your changes have been made **AND TESTED**, you can create a Pull Request to merge your code with the official main branch. When writing your Pull Request, please make use of the Pull Request Template.
 
 ## Code style
 It'd be greatly appreciated if code written by contributors was formatted using `clang-format` with the `.clang-format` file included in this repository. Also, contributors are invited to take note of the following code style guidelines:
